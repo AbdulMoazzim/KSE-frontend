@@ -4,37 +4,34 @@ import Link from "next/link";
 import { FormEvent, useState } from "react";
 import { Logo, LogoMark } from "@/components/logo";
 import { Watermark } from "@/components/watermark";
+import { useRouter } from "next/navigation";
+import axios from "axios";
 
 export default function LoginPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [attempts, setAttempts] = useState(0);
-  const [error, setError] = useState<{ title: string; body: string } | null>(null);
+  const router = useRouter();
+  const [error, setError] = useState<string|null>(null);
   const [submitting, setSubmitting] = useState(false);
 
   function handleSubmit(e: FormEvent) {
     e.preventDefault();
-    const nextAttempts = attempts + 1;
-    setAttempts(nextAttempts);
-
-    // Demo-only front-end validation illustrating the two required error
-    // states surfaced by POST /api/v1/auth/login: invalid credentials, and
-    // a lockout with exponential backoff after repeated failures.
-    if (nextAttempts >= 3) {
-      const waitMin = Math.min(2 ** (nextAttempts - 3), 15);
-      setError({
-        title: "Too many attempts",
-        body: `Try again in ${waitMin} minute${waitMin === 1 ? "" : "s"}.`,
-      });
-      setSubmitting(true);
-      setTimeout(() => setSubmitting(false), 1200);
-      return;
-    }
-
-    setError({
-      title: "Incorrect email or password",
-      body: "Check your credentials and try again.",
-    });
+    setSubmitting(true);
+    axios.post("/api/login", {
+      email,
+      password
+    }).then((response) => {
+      if (response.status === 422) {
+        setError("Invalid Credentials");
+      } else {
+        router.push("/dashboard");
+      }
+    })
+    .catch(() => {
+      setError("Error Occured during request!");
+    }).finally(()=>{
+      setSubmitting(false);
+    })
   }
 
   return (
@@ -73,8 +70,7 @@ export default function LoginPage() {
                 <circle cx="8" cy="11" r="0.9" fill="#963C36" />
               </svg>
               <span>
-                <span className="mb-0.5 block font-semibold text-[#7C2E29]">{error.title}</span>
-                <span>{error.body}</span>
+                <span>{error}</span>
               </span>
             </div>
           )}

@@ -1,9 +1,10 @@
 "use client";
 
-import Link from "next/link";
 import { FormEvent, useState } from "react";
-import { Logo, LogoMark } from "@/components/logo";
 import { Watermark } from "@/components/watermark";
+import Link from "next/link";
+import { Logo, LogoMark } from "@/components/logo";
+import axios from "axios";
 
 export default function RegisterPage() {
   const [submitted, setSubmitted] = useState(false);
@@ -23,6 +24,7 @@ export default function RegisterPage() {
   function handleSubmit(e: FormEvent) {
     e.preventDefault();
     setError(null);
+    setSubmitted(false);
 
     if (form.password.length < 8) {
       setError("Password must be at least 8 characters.");
@@ -32,10 +34,24 @@ export default function RegisterPage() {
       setError("Passwords do not match.");
       return;
     }
-
-    // Wire this to POST /api/v1/auth/register
-    setSubmitted(true);
+    axios.post(`/api/register`, {
+      email: form.email,
+      password: form.password,
+      company_name: form.tenantName
+    }).then((response) => {
+      if (response.status === 422) {
+        setError("Invalid Credentials");
+      } else {
+      }
+    })
+      .catch(() => {
+        setError("Error Occured during request!");
+      }).finally(() => {
+        setSubmitted(false);
+      })
   }
+
+
 
   if (submitted) {
     return (
@@ -88,7 +104,7 @@ export default function RegisterPage() {
             Request institutional access
           </h1>
           <p className="mb-7 text-center text-[13px] text-slate">
-            One desk, one isolated tenant. Provisioned by an admin after review.
+            One Company, one isolated tenant. Provisioned by an admin after review.
           </p>
 
           {error && (
@@ -119,12 +135,12 @@ export default function RegisterPage() {
               </div>
               <div>
                 <label htmlFor="tenantName" className="mb-2 block text-[11.5px] font-semibold uppercase tracking-wide text-slate">
-                  Tenant / desk name
+                  Tenant / Company
                 </label>
                 <input
                   id="tenantName"
                   required
-                  placeholder="Empiric Desk"
+                  placeholder="Company Name"
                   value={form.tenantName}
                   onChange={(e) => update("tenantName", e.target.value)}
                   className="w-full rounded-xl border-[1.5px] border-transparent bg-tint px-3.5 py-3 text-[14.5px] text-navy placeholder:text-[#A2A9C4] focus:border-gold focus:bg-white focus:outline-none"

@@ -1,6 +1,6 @@
+import "./global.css"
 import type { Metadata } from "next";
-import { Source_Serif_4, IBM_Plex_Sans, IBM_Plex_Mono } from "next/font/google";
-import "./globals.css";
+import { IBM_Plex_Mono, IBM_Plex_Sans, Source_Serif_4 } from "next/font/google"
 
 const sourceSerif = Source_Serif_4({
   subsets: ["latin"],

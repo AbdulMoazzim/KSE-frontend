@@ -1,9 +1,8 @@
-import Link from "next/link";
-import { Logo } from "@/components/logo";
 import { Button } from "@/components/button";
 import { Watermark } from "@/components/watermark";
 import { StepChart } from "@/components/step-chart";
 import { MiniChart } from "@/components/mini-chart";
+import Header from "@/components/Header";
 
 const riskCards = [
   {
@@ -72,26 +71,7 @@ export default function LandingPage() {
   return (
     <main>
       {/* Header */}
-      <header className="sticky top-0 z-50 flex items-center justify-between border-b border-line bg-[#FBFAF7]/85 px-10 py-4 backdrop-blur-md">
-        <Logo />
-        <nav className="hidden items-center gap-8 md:flex">
-          <a href="#governance" className="text-[13.5px] font-medium text-slate hover:text-navy">
-            Risk Governance
-          </a>
-          <a href="#rigor" className="text-[13.5px] font-medium text-slate hover:text-navy">
-            Statistical Rigor
-          </a>
-          <a href="#access" className="text-[13.5px] font-medium text-slate hover:text-navy">
-            Access Tiers
-          </a>
-          <Link href="/login" className="text-[13.5px] font-medium text-slate hover:text-navy">
-            Sign in
-          </Link>
-          <Button variant="gold" href="/register">
-            Request access
-          </Button>
-        </nav>
-      </header>
+      <Header />
 
       {/* Hero */}
       <section
