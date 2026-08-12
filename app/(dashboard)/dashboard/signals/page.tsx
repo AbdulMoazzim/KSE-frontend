@@ -1,90 +1,163 @@
+"use client";
+
+import { useCallback, useEffect, useState } from "react";
 import { Topbar } from "@/components/dashboard/topbar";
 import { StatCard } from "@/components/dashboard/stat-card";
-import { liveSignals } from "@/lib/mock-data";
+import { LoadingState, ErrorState, EmptyState } from "@/components/dashboard/async-state";
+import { apiGet, ApiError } from "@/lib/api-client";
+import { extractArray, normalizeSignal, normalizeSignalSummary } from "@/lib/normalize";
+import { LiveSignal, LiveSignalSummary } from "@/lib/types";
 
-function outcomeTone(outcome: string) {
+function outcomeTone(outcome: string | null) {
   if (outcome === "WIN") return "bg-tint-green text-brand-green";
   if (outcome === "LOSS") return "bg-tint-red text-brand-red";
   if (outcome === "OPEN") return "bg-tint-gold text-gold";
   return "bg-tint text-slate";
 }
 
+function fmtPct(value: number | null) {
+  if (value === null) return "—";
+  return `${value >= 0 ? "+" : ""}${value.toFixed(2)}%`;
+}
+
 export default function LiveSignalsPage() {
-  const wins = liveSignals.filter((s) => s.outcome === "WIN").length;
-  const losses = liveSignals.filter((s) => s.outcome === "LOSS").length;
-  const decided = wins + losses;
-  const winRate = decided ? ((wins / decided) * 100).toFixed(0) : "—";
-  const avgReturn =
-    liveSignals.filter((s) => s.returnPct !== null).reduce((sum, s) => sum + (s.returnPct ?? 0), 0) /
-    liveSignals.filter((s) => s.returnPct !== null).length;
+  const [signals, setSignals] = useState<LiveSignal[] | null>(null);
+  const [summary, setSummary] = useState<LiveSignalSummary | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  const load = useCallback(async () => {
+    setLoading(true);
+    setError(null);
+    try {
+      const [signalsRes, summaryRes] = await Promise.all([
+        apiGet("/api/live-signals", {"X-Tenant-ID": "1"}),
+        apiGet("/api/live-signals/summary", {"X-Tenant-ID": "1"}),
+      ]);
+      setSignals(extractArray(signalsRes, ["signals"]).map(normalizeSignal));
+      setSummary(normalizeSignalSummary(summaryRes));
+    } catch (err) {
+      setError(
+        err instanceof ApiError ? err.message : "We couldn't load your live signals right now."
+      );
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    load();
+  }, [load]);
 
   return (
     <>
-      <Topbar title="Live Signals" />
+      <Topbar
+        title="Live Signals"
+        subtitle="What the engine has found and traded — a plain, honest record, not a projection."
+      />
       <main className="flex-1 space-y-6 px-8 py-7">
-        <p className="max-w-[640px] text-[13.5px] leading-relaxed text-slate">
-          A day-by-day record of live and forward-paper signals and their real outcomes — this is the honest
-          ledger, not a backtest summary.
-        </p>
+        {loading && !signals ? (
+          <LoadingState label="Loading live signals…" />
+        ) : error ? (
+          <ErrorState message={error} onRetry={load} />
+        ) : (
+          <>
+            <div className="grid gap-5 md:grid-cols-4">
+              <StatCard
+                label="Win rate"
+                value={summary?.winRatePct !== null && summary?.winRatePct !== undefined ? `${summary.winRatePct.toFixed(0)}%` : "—"}
+                sub={
+                  summary?.wins !== null && summary?.losses !== null
+                    ? `${summary?.wins ?? 0} win · ${summary?.losses ?? 0} loss, decided signals`
+                    : "Decided signals only"
+                }
+              />
+              <StatCard
+                label="Avg. return"
+                value={fmtPct(summary?.avgReturnPct ?? null)}
+                tone={summary?.avgReturnPct !== null && summary?.avgReturnPct !== undefined && summary.avgReturnPct >= 0 ? "green" : "red"}
+                sub="Across all logged outcomes"
+              />
+              <StatCard
+                label="Open signals"
+                value={summary?.openCount !== null && summary?.openCount !== undefined ? String(summary.openCount) : "—"}
+              />
+              <StatCard
+                label="Total tracked"
+                value={signals ? String(signals.length) : "—"}
+                sub="This view, most recent first"
+              />
+            </div>
 
-        <div className="grid gap-5 md:grid-cols-4">
-          <StatCard label="Win rate" value={`${winRate}%`} sub={`${wins}W / ${losses}L, decided signals`} />
-          <StatCard
-            label="Avg. return"
-            value={`${avgReturn >= 0 ? "+" : ""}${avgReturn.toFixed(2)}%`}
-            tone={avgReturn >= 0 ? "green" : "red"}
-            sub="Across all logged outcomes"
-          />
-          <StatCard label="Open signals" value={String(liveSignals.filter((s) => s.outcome === "OPEN").length)} />
-          <StatCard label="Total tracked" value={String(liveSignals.length)} sub="This view, most recent first" />
-        </div>
-
-        <div className="overflow-hidden rounded-2xl border border-line bg-panel">
-          <table className="w-full text-left text-[13.5px]">
-            <thead>
-              <tr className="border-b border-line text-[11px] uppercase tracking-wide text-slate">
-                <th className="px-5 py-3.5 font-medium">Date</th>
-                <th className="px-5 py-3.5 font-medium">Ticker</th>
-                <th className="px-5 py-3.5 font-medium">Timeframe</th>
-                <th className="px-5 py-3.5 font-medium">Direction</th>
-                <th className="px-5 py-3.5 font-medium">Confluence</th>
-                <th className="px-5 py-3.5 font-medium">Entry</th>
-                <th className="px-5 py-3.5 font-medium">Exit</th>
-                <th className="px-5 py-3.5 font-medium">Outcome</th>
-                <th className="px-5 py-3.5 text-right font-medium">Return</th>
-              </tr>
-            </thead>
-            <tbody>
-              {liveSignals.map((s) => (
-                <tr key={s.id} className="border-b border-line last:border-0 hover:bg-tint/60">
-                  <td className="px-5 py-3.5 font-mono text-slate">{s.date}</td>
-                  <td className="px-5 py-3.5 font-mono font-medium text-navy">{s.ticker}</td>
-                  <td className="px-5 py-3.5 text-slate">{s.timeframe}</td>
-                  <td className={`px-5 py-3.5 ${s.direction === "LONG" ? "text-brand-green" : "text-brand-red"}`}>
-                    {s.direction}
-                  </td>
-                  <td className="px-5 py-3.5 font-mono text-slate">{s.confluenceScore.toFixed(2)}</td>
-                  <td className="px-5 py-3.5 font-mono text-slate">{s.entryPrice.toFixed(2)}</td>
-                  <td className="px-5 py-3.5 font-mono text-slate">
-                    {s.exitPrice ? s.exitPrice.toFixed(2) : "—"}
-                  </td>
-                  <td className="px-5 py-3.5">
-                    <span className={`rounded-full px-2.5 py-1 font-mono text-[10.5px] ${outcomeTone(s.outcome)}`}>
-                      {s.outcome}
-                    </span>
-                  </td>
-                  <td
-                    className={`px-5 py-3.5 text-right font-mono font-medium ${
-                      s.returnPct === null ? "text-slate" : s.returnPct >= 0 ? "text-brand-green" : "text-brand-red"
-                    }`}
-                  >
-                    {s.returnPct === null ? "—" : `${s.returnPct >= 0 ? "+" : ""}${s.returnPct.toFixed(2)}%`}
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
+            {!signals || signals.length === 0 ? (
+              <EmptyState
+                title="No live signals yet"
+                description="Signals appear here the moment the intraday or investment engine finds a setup worth tracking."
+              />
+            ) : (
+              <div className="overflow-hidden rounded-2xl border border-line bg-panel">
+                <div className="overflow-x-auto">
+                  <table className="w-full text-left text-[13.5px]">
+                    <thead>
+                      <tr className="border-b border-line text-[11px] uppercase tracking-wide text-slate">
+                        <th className="px-5 py-3.5 font-medium">Date</th>
+                        <th className="px-5 py-3.5 font-medium">Ticker</th>
+                        <th className="px-5 py-3.5 font-medium">Timeframe</th>
+                        <th className="px-5 py-3.5 font-medium">Direction</th>
+                        <th className="px-5 py-3.5 font-medium">Confluence</th>
+                        <th className="px-5 py-3.5 font-medium">Entry</th>
+                        <th className="px-5 py-3.5 font-medium">Exit</th>
+                        <th className="px-5 py-3.5 font-medium">Outcome</th>
+                        <th className="px-5 py-3.5 text-right font-medium">Return</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {signals.map((s) => (
+                        <tr key={s.id} className="border-b border-line last:border-0 hover:bg-tint/60">
+                          <td className="px-5 py-3.5 font-mono text-slate">{s.date ?? "—"}</td>
+                          <td className="px-5 py-3.5 font-mono font-medium text-navy">{s.ticker}</td>
+                          <td className="px-5 py-3.5 text-slate">{s.timeframe ?? "—"}</td>
+                          <td
+                            className={`px-5 py-3.5 ${
+                              s.direction === "LONG"
+                                ? "text-brand-green"
+                                : s.direction === "SHORT"
+                                ? "text-brand-red"
+                                : "text-slate"
+                            }`}
+                          >
+                            {s.direction ?? "—"}
+                          </td>
+                          <td className="px-5 py-3.5 font-mono text-slate">
+                            {s.confluenceScore !== null ? s.confluenceScore.toFixed(2) : "—"}
+                          </td>
+                          <td className="px-5 py-3.5 font-mono text-slate">
+                            {s.entryPrice !== null ? s.entryPrice.toFixed(2) : "—"}
+                          </td>
+                          <td className="px-5 py-3.5 font-mono text-slate">
+                            {s.exitPrice !== null ? s.exitPrice.toFixed(2) : "—"}
+                          </td>
+                          <td className="px-5 py-3.5">
+                            <span className={`rounded-full px-2.5 py-1 font-mono text-[10.5px] ${outcomeTone(s.outcome)}`}>
+                              {s.outcome ?? "—"}
+                            </span>
+                          </td>
+                          <td
+                            className={`px-5 py-3.5 text-right font-mono font-medium ${
+                              s.returnPct === null ? "text-slate" : s.returnPct >= 0 ? "text-brand-green" : "text-brand-red"
+                            }`}
+                          >
+                            {fmtPct(s.returnPct)}
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            )}
+          </>
+        )}
       </main>
     </>
   );

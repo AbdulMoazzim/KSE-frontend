@@ -14,7 +14,7 @@ export async function POST(req: Request) {
 
   if (!res.ok) {
   const errBody = await res.text();
-  console.log(errBody)
+  console.log(envs.API_KEY)
   return Response.json({ error: errBody }, { status: res.status });
 }
 

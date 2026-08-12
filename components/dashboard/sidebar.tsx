@@ -52,6 +52,16 @@ const navItems = [
       </svg>
     ),
   },
+  {
+    href: "/dashboard/daily-report",
+    label: "Daily Report",
+    icon: (active: boolean) => (
+      <svg width={18} height={18} viewBox="0 0 18 18" fill="none">
+        <rect x="4" y="2" width="10" height="14" rx="1.5" stroke={active ? "#1E2761" : "#5B6B85"} strokeWidth={1.6} />
+        <path d="M6.5 6h5M6.5 9h5M6.5 12h3" stroke={active ? "#1E2761" : "#5B6B85"} strokeWidth={1.4} strokeLinecap="round" />
+      </svg>
+    ),
+  },
 ];
 
 export function Sidebar() {

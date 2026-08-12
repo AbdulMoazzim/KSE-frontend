@@ -3,16 +3,14 @@
 import { StatusPill } from "@/components/badge";
 import { useKillSwitch } from "@/context/kill-switch-context";
 
-export function Topbar({ title }: { title: string }) {
+export function Topbar({ title, subtitle }: { title: string; subtitle?: string }) {
   const { status } = useKillSwitch();
 
   return (
-    <div className="flex items-center justify-between border-b border-line bg-panel/80 px-8 py-5 backdrop-blur-md">
+    <div className="flex flex-wrap items-center justify-between gap-3 border-b border-line bg-panel/80 px-8 py-5 backdrop-blur-md">
       <div>
         <h1 className="font-serif text-[21px] font-semibold text-navy">{title}</h1>
-        <p className="font-mono text-[11px] tracking-wide text-slate">
-          EMPIRIC DESK · TIMEFRAME-AWARE · TRADER
-        </p>
+        {subtitle && <p className="mt-0.5 text-[13px] text-slate">{subtitle}</p>}
       </div>
       <div className="flex items-center gap-3">
         {status.active ? (

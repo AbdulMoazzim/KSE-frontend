@@ -1,55 +1,65 @@
-export type Timeframe = "1H" | "1D";
-
-export type Direction = "LONG" | "SHORT";
-
-export type SignalOutcome = "WIN" | "LOSS" | "OPEN" | "SCRATCH";
-
 export type Role = "trader" | "admin" | "super_admin";
 
 export interface LiveSignal {
   id: string;
-  date: string;
+  date: string | null;
   ticker: string;
-  timeframe: Timeframe;
-  direction: Direction;
-  confluenceScore: number;
-  entryPrice: number;
+  timeframe: string | null;
+  direction: string | null;
+  confluenceScore: number | null;
+  entryPrice: number | null;
   exitPrice: number | null;
-  outcome: SignalOutcome;
+  outcome: string | null;
   returnPct: number | null;
+}
+
+export interface LiveSignalSummary {
+  winRatePct: number | null;
+  wins: number | null;
+  losses: number | null;
+  openCount: number | null;
+  totalCount: number | null;
+  avgReturnPct: number | null;
 }
 
 export interface OpenPosition {
   id: string;
   ticker: string;
-  timeframe: Timeframe;
-  direction: Direction;
-  entryPrice: number;
-  markPrice: number;
-  qty: number;
-  unrealizedPct: number;
-  openedAt: string;
+  timeframe: string | null;
+  direction: string | null;
+  entryPrice: number | null;
+  markPrice: number | null;
+  qty: number | null;
+  unrealizedPct: number | null;
+  openedAt: string | null;
 }
 
 export interface ClosedTrade {
   id: string;
   ticker: string;
-  timeframe: Timeframe;
-  direction: Direction;
-  entryPrice: number;
-  exitPrice: number;
-  qty: number;
-  realizedPct: number;
-  openedAt: string;
-  closedAt: string;
+  timeframe: string | null;
+  direction: string | null;
+  entryPrice: number | null;
+  exitPrice: number | null;
+  qty: number | null;
+  realizedPct: number | null;
+  openedAt: string | null;
+  closedAt: string | null;
+}
+
+export interface TradeLogSummary {
+  openCount: number | null;
+  closedCount: number | null;
+  realizedTotalPct: number | null;
+  winCount: number | null;
 }
 
 export interface KillSwitchEvent {
   id: string;
-  action: "ACTIVATED" | "DEACTIVATED";
-  reason: string;
-  actor: string;
-  timestamp: string;
+  action: "ACTIVATED" | "DEACTIVATED" | null;
+  reason: string | null;
+  actor: string | null;
+  timestamp: string | null;
 }
 
 export interface KillSwitchStatus {
@@ -57,4 +67,14 @@ export interface KillSwitchStatus {
   activatedBy: string | null;
   activatedAt: string | null;
   reason: string | null;
+}
+
+export interface DailyReport {
+  date: string | null;
+  signalsCount: number | null;
+  entriesCount: number | null;
+  closedCount: number | null;
+  equityMovePct: number | null;
+  riskFlags: string[];
+  notes: string | null;
 }
