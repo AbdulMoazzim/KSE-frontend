@@ -1,7 +1,7 @@
 export function Watermark({
   label = "KSE SENTINEL",
   opacity = "opacity-[0.04]",
-  color = "text-navy",
+  color = "text-ink",
 }: {
   label?: string;
   opacity?: string;

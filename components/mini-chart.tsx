@@ -10,7 +10,7 @@ export function MiniChart({ variant }: { variant: "backtest" | "live" }) {
         <path
           d={backtestPath}
           fill="none"
-          stroke="#8891AE"
+          stroke="rgb(var(--c-slate))"
           strokeWidth={2}
           strokeDasharray="4 3"
           strokeLinecap="round"
@@ -21,8 +21,8 @@ export function MiniChart({ variant }: { variant: "backtest" | "live" }) {
 
   return (
     <svg viewBox="0 0 400 90" className="block h-[90px] w-full">
-      <path d={livePath} fill="none" stroke="#3F8F6C" strokeWidth={2.4} strokeLinecap="round" />
-      <circle cx="400" cy="10" r="4" fill="#3F8F6C">
+      <path d={livePath} fill="none" stroke="rgb(var(--c-brand-green))" strokeWidth={2.4} strokeLinecap="round" />
+      <circle cx="400" cy="10" r="4" fill="rgb(var(--c-brand-green))">
         <animate attributeName="opacity" values="1;0.3;1" dur="1.8s" repeatCount="indefinite" />
       </circle>
     </svg>

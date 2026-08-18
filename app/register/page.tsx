@@ -60,12 +60,12 @@ export default function RegisterPage() {
         <div className="relative z-10 w-full max-w-[420px] rounded-xl2 border border-line bg-panel p-9 text-center shadow-panel">
           <div className="mx-auto mb-5 flex h-14 w-14 items-center justify-center rounded-2xl bg-tint-green">
             <svg width={26} height={26} viewBox="0 0 26 26" fill="none">
-              <path d="M6 13.5l4.5 4.5L20 8" stroke="#3F8F6C" strokeWidth={2.4} strokeLinecap="round" strokeLinejoin="round" />
+              <path d="M6 13.5l4.5 4.5L20 8" stroke="rgb(var(--c-brand-green))" strokeWidth={2.4} strokeLinecap="round" strokeLinejoin="round" />
             </svg>
           </div>
-          <h1 className="mb-2 font-serif text-[22px] font-semibold text-navy">Request received</h1>
+          <h1 className="mb-2 font-serif text-[22px] font-semibold text-ink">Request received</h1>
           <p className="mb-7 text-[13.5px] leading-relaxed text-slate">
-            We&rsquo;ve logged your request for a <strong className="text-navy">{form.tenantName || "new"}</strong>{" "}
+            We&rsquo;ve logged your request for a <strong className="text-ink">{form.tenantName || "new"}</strong>{" "}
             tenant. An admin will provision your account and email {form.email || "you"} once your desk is ready.
           </p>
           <Link
@@ -87,7 +87,7 @@ export default function RegisterPage() {
         <Logo showSub />
         <Link
           href="/"
-          className="rounded-full border border-line bg-panel px-4 py-2 text-[13px] text-slate transition-colors hover:border-navy hover:text-navy"
+          className="rounded-full border border-line bg-panel px-4 py-2 text-[13px] text-slate transition-colors hover:border-navy hover:text-ink"
         >
           ← Back to overview
         </Link>
@@ -100,7 +100,7 @@ export default function RegisterPage() {
               <LogoMark size={32} />
             </div>
           </div>
-          <h1 className="mb-1.5 text-center font-serif text-[22px] font-semibold text-navy">
+          <h1 className="mb-1.5 text-center font-serif text-[22px] font-semibold text-ink">
             Request institutional access
           </h1>
           <p className="mb-7 text-center text-[13px] text-slate">
@@ -108,11 +108,11 @@ export default function RegisterPage() {
           </p>
 
           {error && (
-            <div className="mb-5 flex items-start gap-2.5 rounded-xl border border-[#F3D2CF] bg-tint-red px-3.5 py-3 text-[13px] leading-relaxed text-[#963C36]">
+            <div className="mb-5 flex items-start gap-2.5 rounded-xl border border-brand-red/30 bg-tint-red px-3.5 py-3 text-[13px] leading-relaxed text-[rgb(var(--c-brand-red))]">
               <svg width={16} height={16} viewBox="0 0 16 16" fill="none" className="mt-0.5 flex-none">
-                <circle cx="8" cy="8" r="7" stroke="#963C36" strokeWidth={1.4} />
-                <path d="M8 4.5v4" stroke="#963C36" strokeWidth={1.4} strokeLinecap="round" />
-                <circle cx="8" cy="11" r="0.9" fill="#963C36" />
+                <circle cx="8" cy="8" r="7" stroke="rgb(var(--c-brand-red))" strokeWidth={1.4} />
+                <path d="M8 4.5v4" stroke="rgb(var(--c-brand-red))" strokeWidth={1.4} strokeLinecap="round" />
+                <circle cx="8" cy="11" r="0.9" fill="rgb(var(--c-brand-red))" />
               </svg>
               <span>{error}</span>
             </div>
@@ -130,7 +130,7 @@ export default function RegisterPage() {
                   placeholder="Abdul Rehman"
                   value={form.fullName}
                   onChange={(e) => update("fullName", e.target.value)}
-                  className="w-full rounded-xl border-[1.5px] border-transparent bg-tint px-3.5 py-3 text-[14.5px] text-navy placeholder:text-[#A2A9C4] focus:border-gold focus:bg-white focus:outline-none"
+                  className="w-full rounded-xl border-[1.5px] border-transparent bg-tint px-3.5 py-3 text-[14.5px] text-ink placeholder:text-slate focus:border-gold focus:bg-panel focus:outline-none"
                 />
               </div>
               <div>
@@ -143,7 +143,7 @@ export default function RegisterPage() {
                   placeholder="Company Name"
                   value={form.tenantName}
                   onChange={(e) => update("tenantName", e.target.value)}
-                  className="w-full rounded-xl border-[1.5px] border-transparent bg-tint px-3.5 py-3 text-[14.5px] text-navy placeholder:text-[#A2A9C4] focus:border-gold focus:bg-white focus:outline-none"
+                  className="w-full rounded-xl border-[1.5px] border-transparent bg-tint px-3.5 py-3 text-[14.5px] text-ink placeholder:text-slate focus:border-gold focus:bg-panel focus:outline-none"
                 />
               </div>
             </div>
@@ -160,7 +160,7 @@ export default function RegisterPage() {
                 placeholder="you@institution.com"
                 value={form.email}
                 onChange={(e) => update("email", e.target.value)}
-                className="w-full rounded-xl border-[1.5px] border-transparent bg-tint px-3.5 py-3 text-[14.5px] text-navy placeholder:text-[#A2A9C4] focus:border-gold focus:bg-white focus:outline-none"
+                className="w-full rounded-xl border-[1.5px] border-transparent bg-tint px-3.5 py-3 text-[14.5px] text-ink placeholder:text-slate focus:border-gold focus:bg-panel focus:outline-none"
               />
             </div>
 
@@ -177,7 +177,7 @@ export default function RegisterPage() {
                   placeholder="At least 8 characters"
                   value={form.password}
                   onChange={(e) => update("password", e.target.value)}
-                  className="w-full rounded-xl border-[1.5px] border-transparent bg-tint px-3.5 py-3 text-[14.5px] text-navy placeholder:text-[#A2A9C4] focus:border-gold focus:bg-white focus:outline-none"
+                  className="w-full rounded-xl border-[1.5px] border-transparent bg-tint px-3.5 py-3 text-[14.5px] text-ink placeholder:text-slate focus:border-gold focus:bg-panel focus:outline-none"
                 />
               </div>
               <div>
@@ -192,14 +192,14 @@ export default function RegisterPage() {
                   placeholder="Repeat password"
                   value={form.confirmPassword}
                   onChange={(e) => update("confirmPassword", e.target.value)}
-                  className="w-full rounded-xl border-[1.5px] border-transparent bg-tint px-3.5 py-3 text-[14.5px] text-navy placeholder:text-[#A2A9C4] focus:border-gold focus:bg-white focus:outline-none"
+                  className="w-full rounded-xl border-[1.5px] border-transparent bg-tint px-3.5 py-3 text-[14.5px] text-ink placeholder:text-slate focus:border-gold focus:bg-panel focus:outline-none"
                 />
               </div>
             </div>
 
             <button
               type="submit"
-              className="w-full rounded-full bg-gold py-3.5 text-[14.5px] font-semibold text-white shadow-soft transition-all hover:-translate-y-px hover:bg-gold-bright"
+              className="w-full rounded-full bg-gold py-3.5 text-[14.5px] font-semibold text-on-gold shadow-soft transition-all hover:-translate-y-px hover:bg-gold-bright"
             >
               Submit request
             </button>
@@ -214,7 +214,7 @@ export default function RegisterPage() {
         </div>
       </main>
 
-      <footer className="relative z-10 px-5 pb-8 text-center text-[11.5px] tracking-wide text-[#9098B4]">
+      <footer className="relative z-10 px-5 pb-8 text-center text-[11.5px] tracking-wide text-slate">
         New accounts are reviewed by a tenant admin before activation.
       </footer>
     </div>

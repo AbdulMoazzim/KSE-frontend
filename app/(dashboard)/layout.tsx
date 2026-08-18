@@ -1,6 +1,7 @@
 import { Sidebar } from "@/components/dashboard/sidebar";
 import { KillSwitchBanner } from "@/components/dashboard/kill-switch-banner";
 import { KillSwitchProvider } from "@/context/kill-switch-context";
+import { TimeframeProvider } from "@/context/timeframe-context";
 
 export default function DashboardGroupLayout({
   children,
@@ -8,14 +9,16 @@ export default function DashboardGroupLayout({
   children: React.ReactNode;
 }) {
   return (
-    <KillSwitchProvider>
-      <div className="flex min-h-screen bg-bg">
-        <Sidebar />
-        <div className="flex min-h-screen flex-1 flex-col">
-          <KillSwitchBanner />
-          {children}
+    <TimeframeProvider>
+      <KillSwitchProvider>
+        <div className="flex min-h-screen bg-bg">
+          <Sidebar />
+          <div className="flex min-h-screen flex-1 flex-col">
+            <KillSwitchBanner />
+            {children}
+          </div>
         </div>
-      </div>
-    </KillSwitchProvider>
+      </KillSwitchProvider>
+    </TimeframeProvider>
   );
 }

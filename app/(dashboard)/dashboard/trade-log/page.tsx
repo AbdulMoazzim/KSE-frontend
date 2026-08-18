@@ -12,6 +12,7 @@ import {
   normalizeTradeLogSummary,
 } from "@/lib/normalize";
 import { ClosedTrade, OpenPosition, TradeLogSummary } from "@/lib/types";
+import { useTimeframe } from "@/context/timeframe-context";
 
 type Tab = "open" | "closed";
 
@@ -21,6 +22,7 @@ function fmtPct(value: number | null) {
 }
 
 export default function TradeLogPage() {
+  const { timeframe } = useTimeframe();
   const [tab, setTab] = useState<Tab>("open");
   const [openPositions, setOpenPositions] = useState<OpenPosition[] | null>(null);
   const [closedTrades, setClosedTrades] = useState<ClosedTrade[] | null>(null);
@@ -33,9 +35,9 @@ export default function TradeLogPage() {
     setError(null);
     try {
       const [openRes, closedRes, summaryRes] = await Promise.all([
-        apiGet("/api/trade-log/open",{"X-Tenant-ID": "1"}),
-        apiGet("/api/trade-log/closed",{"X-Tenant-ID": "1"}),
-        apiGet("/api/trade-log/summary",{"X-Tenant-ID": "1"}),
+        apiGet(`/api/trade-log/open?timeframe=${timeframe}`,{"X-Tenant-ID": "1"}),
+        apiGet(`/api/trade-log/closed?timeframe=${timeframe}`,{"X-Tenant-ID": "1"}),
+        apiGet(`/api/trade-log/summary?timeframe=${timeframe}`,{"X-Tenant-ID": "1"}),
       ]);
       setOpenPositions(extractArray(openRes, ["positions", "open"]).map(normalizeOpenPosition));
       setClosedTrades(extractArray(closedRes, ["trades", "closed"]).map(normalizeClosedTrade));
@@ -45,7 +47,7 @@ export default function TradeLogPage() {
     } finally {
       setLoading(false);
     }
-  }, []);
+  }, [timeframe]);
 
   useEffect(() => {
     load();
@@ -90,7 +92,7 @@ export default function TradeLogPage() {
               <button
                 onClick={() => setTab("open")}
                 className={`rounded-full px-4 py-1.5 text-[13px] font-medium transition-colors ${
-                  tab === "open" ? "bg-navy text-white" : "text-slate hover:text-navy"
+                  tab === "open" ? "bg-navy text-white" : "text-slate hover:text-ink"
                 }`}
               >
                 Open positions
@@ -98,7 +100,7 @@ export default function TradeLogPage() {
               <button
                 onClick={() => setTab("closed")}
                 className={`rounded-full px-4 py-1.5 text-[13px] font-medium transition-colors ${
-                  tab === "closed" ? "bg-navy text-white" : "text-slate hover:text-navy"
+                  tab === "closed" ? "bg-navy text-white" : "text-slate hover:text-ink"
                 }`}
               >
                 Closed trades
@@ -112,7 +114,7 @@ export default function TradeLogPage() {
                   description="When a live signal turns into a trade, it will show up here with a live mark-to-market price."
                 />
               ) : (
-                <div className="overflow-hidden rounded-2xl border border-line bg-panel">
+                <div className="overflow-hidden rounded-2xl border border-line bg-card shadow-sm">
                   <div className="overflow-x-auto">
                     <table className="w-full text-left text-[13.5px]">
                       <thead>
@@ -130,7 +132,7 @@ export default function TradeLogPage() {
                       <tbody>
                         {openPositions.map((p) => (
                           <tr key={p.id} className="border-b border-line last:border-0 hover:bg-tint/60">
-                            <td className="px-5 py-3.5 font-mono font-medium text-navy">{p.ticker}</td>
+                            <td className="px-5 py-3.5 font-mono font-medium text-ink">{p.ticker}</td>
                             <td className="px-5 py-3.5 text-slate">{p.timeframe ?? "—"}</td>
                             <td
                               className={`px-5 py-3.5 ${
@@ -171,7 +173,7 @@ export default function TradeLogPage() {
                 description="Once a position is exited, it moves here with its full entry-to-exit record."
               />
             ) : (
-              <div className="overflow-hidden rounded-2xl border border-line bg-panel">
+              <div className="overflow-hidden rounded-2xl border border-line bg-card shadow-sm">
                 <div className="overflow-x-auto">
                   <table className="w-full text-left text-[13.5px]">
                     <thead>
@@ -189,7 +191,7 @@ export default function TradeLogPage() {
                     <tbody>
                       {closedTrades.map((t) => (
                         <tr key={t.id} className="border-b border-line last:border-0 hover:bg-tint/60">
-                          <td className="px-5 py-3.5 font-mono font-medium text-navy">{t.ticker}</td>
+                          <td className="px-5 py-3.5 font-mono font-medium text-ink">{t.ticker}</td>
                           <td className="px-5 py-3.5 text-slate">{t.timeframe ?? "—"}</td>
                           <td
                             className={`px-5 py-3.5 ${

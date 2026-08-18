@@ -10,6 +10,7 @@ import { apiGet, ApiError } from "@/lib/api-client";
 import { extractArray, normalizeOpenPosition, normalizeSignal, normalizeSignalSummary } from "@/lib/normalize";
 import { LiveSignal, LiveSignalSummary, OpenPosition } from "@/lib/types";
 import { useKillSwitch } from "@/context/kill-switch-context";
+import { useTimeframe } from "@/context/timeframe-context";
 
 function outcomeTone(outcome: string | null) {
   if (outcome === "WIN") return "text-brand-green";
@@ -25,6 +26,7 @@ function fmtPct(value: number | null) {
 
 export default function DashboardOverviewPage() {
   const { status: killSwitchStatus } = useKillSwitch();
+  const { timeframe } = useTimeframe();
 
   const [signals, setSignals] = useState<LiveSignal[] | null>(null);
   const [summary, setSummary] = useState<LiveSignalSummary | null>(null);
@@ -37,9 +39,9 @@ export default function DashboardOverviewPage() {
     setError(null);
     try {
       const [signalsRes, summaryRes, positionsRes] = await Promise.all([
-        apiGet("/api/live-signals", {"X-Tenant-ID": "1"}),
-        apiGet("/api/live-signals/summary", {"X-Tenant-ID": "1"}),
-        apiGet("/api/trade-log/open",{"X-Tenant-ID": "1"}),
+        apiGet(`/api/live-signals?timeframe=${timeframe}`, {"X-Tenant-ID": "1"}),
+        apiGet(`/api/live-signals/summary?timeframe=${timeframe}`,{"X-Tenant-ID": "1"}),
+        apiGet(`/api/trade-log/open?timeframe=${timeframe}`,{"X-Tenant-ID": "1"}),
       ]);
       setSignals(extractArray(signalsRes, ["signals"]).map(normalizeSignal));
       setSummary(normalizeSignalSummary(summaryRes));
@@ -53,7 +55,7 @@ export default function DashboardOverviewPage() {
     } finally {
       setLoading(false);
     }
-  }, []);
+  }, [timeframe]);
 
   useEffect(() => {
     load();
@@ -106,9 +108,9 @@ export default function DashboardOverviewPage() {
             <div className="grid gap-6 lg:grid-cols-[1fr_1.2fr]">
               <StepChart />
 
-              <div className="rounded-2xl border border-line bg-panel p-6">
+              <div className="rounded-2xl border border-line bg-card shadow-sm p-6">
                 <div className="mb-1 flex items-center justify-between">
-                  <h2 className="text-[15.5px] font-semibold text-navy">Recent live signals</h2>
+                  <h2 className="text-[15.5px] font-semibold text-ink">Recent live signals</h2>
                   <Link href="/dashboard/signals" className="text-[12.5px] font-medium text-gold hover:text-gold-bright">
                     View all →
                   </Link>
@@ -130,7 +132,7 @@ export default function DashboardOverviewPage() {
                         className="flex flex-wrap items-center justify-between gap-2 rounded-xl px-2.5 py-2.5 text-[13.5px] hover:bg-tint"
                       >
                         <div className="flex items-center gap-3">
-                          <span className="w-16 font-mono font-medium text-navy">{s.ticker}</span>
+                          <span className="w-16 font-mono font-medium text-ink">{s.ticker}</span>
                           {s.timeframe && (
                             <span className="rounded-full bg-tint px-2 py-0.5 font-mono text-[10.5px] text-slate">
                               {s.timeframe}
@@ -157,9 +159,9 @@ export default function DashboardOverviewPage() {
               </div>
             </div>
 
-            <div className="rounded-2xl border border-line bg-panel p-6">
+            <div className="rounded-2xl border border-line bg-card shadow-sm p-6">
               <div className="mb-1 flex items-center justify-between">
-                <h2 className="text-[15.5px] font-semibold text-navy">Open positions</h2>
+                <h2 className="text-[15.5px] font-semibold text-ink">Open positions</h2>
                 <Link href="/dashboard/trade-log" className="text-[12.5px] font-medium text-gold hover:text-gold-bright">
                   Full trade log →
                 </Link>
@@ -188,7 +190,7 @@ export default function DashboardOverviewPage() {
                     <tbody>
                       {positions.map((p) => (
                         <tr key={p.id} className="border-t border-line">
-                          <td className="py-3 font-mono font-medium text-navy">{p.ticker}</td>
+                          <td className="py-3 font-mono font-medium text-ink">{p.ticker}</td>
                           <td className="py-3 text-slate">{p.timeframe ?? "—"}</td>
                           <td
                             className={`py-3 ${

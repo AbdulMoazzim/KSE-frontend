@@ -42,7 +42,7 @@ export default function LoginPage() {
         <Logo showSub />
         <Link
           href="/"
-          className="rounded-full border border-line bg-panel px-4 py-2 text-[13px] text-slate transition-colors hover:border-navy hover:text-navy"
+          className="rounded-full border border-line bg-panel px-4 py-2 text-[13px] text-slate transition-colors hover:border-navy hover:text-ink"
         >
           ← Back to overview
         </Link>
@@ -55,7 +55,7 @@ export default function LoginPage() {
               <LogoMark size={32} />
             </div>
           </div>
-          <h1 className="mb-1.5 text-center font-serif text-[22px] font-semibold text-navy">
+          <h1 className="mb-1.5 text-center font-serif text-[22px] font-semibold text-ink">
             Sign in to your desk
           </h1>
           <p className="mb-7 text-center text-[13px] text-slate">
@@ -63,11 +63,11 @@ export default function LoginPage() {
           </p>
 
           {error && (
-            <div className="mb-5 flex items-start gap-2.5 rounded-xl border border-[#F3D2CF] bg-tint-red px-3.5 py-3 text-[13px] leading-relaxed text-[#963C36]">
+            <div className="mb-5 flex items-start gap-2.5 rounded-xl border border-brand-red/30 bg-tint-red px-3.5 py-3 text-[13px] leading-relaxed text-[rgb(var(--c-brand-red))]">
               <svg width={16} height={16} viewBox="0 0 16 16" fill="none" className="mt-0.5 flex-none">
-                <circle cx="8" cy="8" r="7" stroke="#963C36" strokeWidth={1.4} />
-                <path d="M8 4.5v4" stroke="#963C36" strokeWidth={1.4} strokeLinecap="round" />
-                <circle cx="8" cy="11" r="0.9" fill="#963C36" />
+                <circle cx="8" cy="8" r="7" stroke="rgb(var(--c-brand-red))" strokeWidth={1.4} />
+                <path d="M8 4.5v4" stroke="rgb(var(--c-brand-red))" strokeWidth={1.4} strokeLinecap="round" />
+                <circle cx="8" cy="11" r="0.9" fill="rgb(var(--c-brand-red))" />
               </svg>
               <span>
                 <span>{error}</span>
@@ -88,7 +88,7 @@ export default function LoginPage() {
                 placeholder="you@institution.com"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                className="w-full rounded-xl border-[1.5px] border-transparent bg-tint px-3.5 py-3 text-[14.5px] text-navy placeholder:text-[#A2A9C4] focus:border-gold focus:bg-white focus:outline-none"
+                className="w-full rounded-xl border-[1.5px] border-transparent bg-tint px-3.5 py-3 text-[14.5px] text-ink placeholder:text-slate focus:border-gold focus:bg-panel focus:outline-none"
               />
             </div>
             <div className="mb-4">
@@ -103,7 +103,7 @@ export default function LoginPage() {
                 placeholder="••••••••••"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                className="w-full rounded-xl border-[1.5px] border-transparent bg-tint px-3.5 py-3 text-[14.5px] text-navy placeholder:text-[#A2A9C4] focus:border-gold focus:bg-white focus:outline-none"
+                className="w-full rounded-xl border-[1.5px] border-transparent bg-tint px-3.5 py-3 text-[14.5px] text-ink placeholder:text-slate focus:border-gold focus:bg-panel focus:outline-none"
               />
             </div>
             <div className="-mt-2 mb-5 flex justify-end">
@@ -114,7 +114,7 @@ export default function LoginPage() {
             <button
               type="submit"
               disabled={submitting}
-              className="w-full rounded-full bg-gold py-3.5 text-[14.5px] font-semibold text-white shadow-soft transition-all hover:-translate-y-px hover:bg-gold-bright disabled:translate-y-0 disabled:cursor-not-allowed disabled:opacity-55"
+              className="w-full rounded-full bg-gold py-3.5 text-[14.5px] font-semibold text-on-gold shadow-soft transition-all hover:-translate-y-px hover:bg-gold-bright disabled:translate-y-0 disabled:cursor-not-allowed disabled:opacity-55"
             >
               Sign in
             </button>
@@ -122,7 +122,7 @@ export default function LoginPage() {
 
           <div className="my-6 flex items-center gap-3">
             <div className="h-px flex-1 bg-line" />
-            <span className="font-mono text-[11px] tracking-wide text-[#A2A9C4]">SESSION</span>
+            <span className="font-mono text-[11px] tracking-wide text-slate">SESSION</span>
             <div className="h-px flex-1 bg-line" />
           </div>
 
@@ -140,7 +140,7 @@ export default function LoginPage() {
         </div>
       </main>
 
-      <footer className="relative z-10 px-5 pb-8 text-center text-[11.5px] tracking-wide text-[#9098B4]">
+      <footer className="relative z-10 px-5 pb-8 text-center text-[11.5px] tracking-wide text-slate">
         Decision-support only — this system does not place trades autonomously.
         <br />© 2026 KSE Sentinel
       </footer>

@@ -17,20 +17,23 @@ async function readError(res: Response): Promise<string> {
   return `Something went wrong (${res.status}). Please try again.`;
 }
 
-/** GET one of our own /api/... routes. Never call the KSE Sentinel backend directly from the browser. */
+/**
+ * GET one of our own /api/... routes. Never call the KSE Sentinel backend
+ * directly from the browser. Tenant scoping is automatic (the route
+ * handler attaches X-Tenant-ID server-side from the session cookie) — the
+ * optional `headers` param is only for one-off overrides.
+ */
 export async function apiGet<T = unknown>(path: string, headers?: HeadersInit): Promise<T> {
-  console.log("Hitting api endpont")
-  console.log("headersdasdasd",headers)
   const res = await fetch(path, { cache: "no-store", headers });
   if (!res.ok) throw new ApiError(await readError(res), res.status);
   return res.json();
 }
 
 /** POST to one of our own /api/... routes. */
-export async function apiPost<T = unknown>(path: string, body?: unknown): Promise<T> {
+export async function apiPost<T = unknown>(path: string, body?: unknown, headers?: HeadersInit): Promise<T> {
   const res = await fetch(path, {
     method: "POST",
-    headers: { "Content-Type": "application/json" },
+    headers: { "Content-Type": "application/json", ...headers },
     body: body !== undefined ? JSON.stringify(body) : undefined,
   });
   if (!res.ok) throw new ApiError(await readError(res), res.status);

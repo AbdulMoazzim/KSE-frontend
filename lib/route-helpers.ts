@@ -6,10 +6,15 @@ export function handleBackendError(err: unknown) {
     // 401/403 from upstream almost always means the server's own API key
     // is missing/wrong — not something the signed-in user did.
     if (err.status === 401 || err.status === 403) {
-      console.log(err)
       return NextResponse.json(
         { error: "The dashboard couldn't authenticate with the trading engine. Please contact an admin." },
         { status: 502 }
+      );
+    }
+    if (err.status === 422) {
+      return NextResponse.json(
+        { error: err.message || "That request was missing something the trading engine needs (often the tenant, or a required field)." },
+        { status: 422 }
       );
     }
     return NextResponse.json({ error: err.message }, { status: err.status });

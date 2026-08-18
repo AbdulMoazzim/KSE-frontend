@@ -6,6 +6,8 @@ import {
   LiveSignal,
   LiveSignalSummary,
   OpenPosition,
+  ScreenerRow,
+  SizingTier,
   TradeLogSummary,
 } from "./types";
 
@@ -137,5 +139,35 @@ export function normalizeDailyReport(payload: unknown): DailyReport {
     equityMovePct: pickNumber(payload, ["equity_move_pct", "equityMovePct", "equity_change_pct"]),
     riskFlags: Array.isArray(flagsRaw) ? flagsRaw.map((f) => String(f)) : [],
     notes: pickString(payload, ["notes", "summary"]),
+  };
+}
+
+export function normalizeScreenerRow(row: unknown, index: number): ScreenerRow {
+  return {
+    ticker: pickString(row, ["ticker", "symbol"]) ?? `row-${index}`,
+    sector: pickString(row, ["sector", "industry"]),
+    close: pickNumber(row, ["close", "close_price", "last_price"]),
+    meanReversionZScore: pickNumber(row, ["zscore", "z_score", "mean_reversion_zscore", "mr_zscore"]),
+    distFromMeanPct: pickNumber(row, ["dist_from_mean_pct", "distFromMeanPct", "dist_pct"]),
+    liquidityPercentile: pickNumber(row, [
+      "adv_percentile_252d",
+      "liquidity_percentile",
+      "adv_percentile",
+      "liquidity_pct",
+    ]),
+    advNotionalPkr: pickNumber(row, ["adv_notional_pkr", "advNotionalPkr", "adv_pkr"]),
+    relativeStrengthPct: pickNumber(row, ["relative_strength_pct", "relative_strength", "rs_pct"]),
+    error: pickString(row, ["error"]),
+  };
+}
+
+export function normalizeSizingTier(row: unknown, index: number): SizingTier {
+  return {
+    id: pickString(row, ["tier_id", "id", "name"]) ?? `tier-${index}`,
+    name: pickString(row, ["name", "tier_name", "label"]) ?? pickString(row, ["tier_id", "id"]) ?? `Tier ${index + 1}`,
+    riskPerTradePct: pickNumber(row, ["risk_per_trade_pct", "riskPerTradePct", "risk_pct"]),
+    validated: pick<boolean>(row, ["validated", "real_validated", "backed"]),
+    gated: pick<boolean>(row, ["gated", "is_gated"]),
+    description: pickString(row, ["description", "note", "summary"]),
   };
 }

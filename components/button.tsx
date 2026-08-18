@@ -1,19 +1,20 @@
 import Link from "next/link";
 import { ButtonHTMLAttributes, ReactNode } from "react";
+import { Button as UiButton } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
 
 type Variant = "gold" | "navy" | "ghost" | "outline-light";
 
-const variantClasses: Record<Variant, string> = {
-  gold: "bg-gold text-white border-gold shadow-soft hover:bg-gold-bright hover:border-gold-bright hover:-translate-y-px",
-  navy: "bg-navy text-white border-navy hover:bg-navy-soft hover:border-navy-soft hover:-translate-y-px",
-  ghost:
-    "bg-white text-navy border-line hover:border-navy hover:-translate-y-px",
-  "outline-light":
-    "bg-transparent text-white border-white/40 hover:bg-white/10 hover:border-white",
+// Maps the app's original brand variant names onto the shadcn/ui button's
+// variant system, so every existing call site (<Button variant="gold" />
+// etc.) keeps working unchanged while the actual styling now flows
+// through components/ui/button.tsx.
+const variantMap: Record<Variant, "accent" | "default" | "outline" | "outline-light"> = {
+  gold: "accent",
+  navy: "default",
+  ghost: "outline",
+  "outline-light": "outline-light",
 };
-
-const base =
-  "inline-flex items-center justify-center gap-2 rounded-full border-[1.5px] px-6 py-2.5 text-[13.5px] font-semibold tracking-tight transition-all duration-150";
 
 export function Button({
   variant = "navy",
@@ -27,19 +28,17 @@ export function Button({
   children: ReactNode;
   className?: string;
 } & ButtonHTMLAttributes<HTMLButtonElement>) {
-  const classes = `${base} ${variantClasses[variant]} ${className}`;
-
   if (href) {
     return (
-      <Link href={href} className={classes}>
-        {children}
-      </Link>
+      <UiButton asChild variant={variantMap[variant]} className={className}>
+        <Link href={href}>{children}</Link>
+      </UiButton>
     );
   }
 
   return (
-    <button className={classes} {...rest}>
+    <UiButton variant={variantMap[variant]} className={cn(className)} {...rest}>
       {children}
-    </button>
+    </UiButton>
   );
 }

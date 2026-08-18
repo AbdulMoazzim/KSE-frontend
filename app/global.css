@@ -2,18 +2,114 @@
 @tailwind components;
 @tailwind utilities;
 
+/*
+ * KSE Sentinel design tokens — v2 "Harbor" palette.
+ * A deep teal + burnished bronze system, tuned for a professional
+ * trading console in both light and dark mode. Values are R G B
+ * triplets so Tailwind's opacity-modifier syntax (bg-panel/80) keeps
+ * working. See tailwind.config.ts for how these bind to Tailwind
+ * color classes, including the shadcn/ui-standard token names
+ * (background, foreground, primary, card, etc.) which alias the same
+ * palette so shadcn components drop in without a second color system.
+ */
+:root {
+  /* Brand core */
+  --c-navy: 14 76 73; /* #0E4C49 — deep teal, primary actions / active states */
+  --c-navy-soft: 10 57 55; /* #0A3937 — hover shade for teal fills */
+  --c-gold: 185 134 58; /* #B9863A — burnished bronze, accents & highlights */
+  --c-gold-bright: 205 160 94; /* #CDA05E */
+  --c-on-gold: 33 22 5; /* near-black text that stays readable on bronze */
+
+  /* Neutrals */
+  --c-slate: 90 102 114; /* #5A6672 — secondary text */
+  --c-ink: 16 22 27; /* #10161B — primary text/headings */
+  --c-bg: 246 247 249; /* #F6F7F9 — page background */
+  --c-panel: 255 255 255; /* #FFFFFF — card surface */
+  --c-tint: 238 241 243; /* #EEF1F3 — surface-2 */
+  --c-tint-gold: 251 243 228; /* #FBF3E4 */
+  --c-tint-green: 232 245 238; /* #E8F5EE */
+  --c-tint-red: 252 234 233; /* #FCEAE9 */
+  --c-line: 225 230 234; /* #E1E6EA — border */
+
+  /* Semantic */
+  --c-brand-green: 21 127 74; /* #157F4A */
+  --c-brand-red: 192 51 44; /* #C0332C */
+
+  /* shadcn/ui-standard aliases (kept in the same RGB-triplet space) */
+  --background: var(--c-bg);
+  --foreground: var(--c-ink);
+  --card: var(--c-panel);
+  --card-foreground: var(--c-ink);
+  --popover: var(--c-panel);
+  --popover-foreground: var(--c-ink);
+  --primary: var(--c-navy);
+  --primary-foreground: 255 255 255;
+  --secondary: var(--c-tint);
+  --secondary-foreground: var(--c-ink);
+  --muted: var(--c-tint);
+  --muted-foreground: var(--c-slate);
+  --accent: var(--c-gold);
+  --accent-foreground: var(--c-on-gold);
+  --destructive: var(--c-brand-red);
+  --destructive-foreground: 255 255 255;
+  --border: var(--c-line);
+  --input: var(--c-line);
+  --ring: var(--c-navy);
+  --radius: 0.85rem;
+}
+
+.dark {
+  /* Brand core */
+  --c-navy: 20 101 90; /* #14655A — deep teal, dark enough to keep white button text legible */
+  --c-navy-soft: 27 124 109; /* #1B7C6D — hover shade, brighter but still readable with white text */
+  --c-gold: 227 181 100; /* #E3B564 */
+  --c-gold-bright: 238 200 133; /* #EEC885 */
+  --c-on-gold: 28 20 4;
+
+  /* Neutrals */
+  --c-slate: 151 163 171; /* #97A3AB */
+  --c-ink: 238 241 243; /* #EEF1F3 */
+  --c-bg: 10 14 17; /* #0A0E11 */
+  --c-panel: 18 23 27; /* #12171B */
+  --c-tint: 27 33 38; /* #1B2126 */
+  --c-tint-gold: 44 34 14; /* #2C220E */
+  --c-tint-green: 18 40 30; /* #12281E */
+  --c-tint-red: 43 22 20; /* #2B1614 */
+  --c-line: 38 46 51; /* #262E33 */
+
+  /* Semantic */
+  --c-brand-green: 74 222 148; /* #4ADE94 */
+  --c-brand-red: 235 100 89; /* #EB6459 */
+}
+
 html {
   scroll-behavior: smooth;
 }
 
 body {
-  background-color: #fbfaf7;
-  color: #1e2761;
+  background-color: rgb(var(--c-bg));
+  color: rgb(var(--c-ink));
+  transition: background-color 0.2s ease, color 0.2s ease;
 }
 
 ::selection {
-  background-color: #fbf3e1;
-  color: #1e2761;
+  background-color: rgb(var(--c-tint-gold));
+  color: rgb(var(--c-ink));
+}
+
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: rgb(var(--c-line));
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: rgb(var(--c-slate));
 }
 
 .tabular-nums {

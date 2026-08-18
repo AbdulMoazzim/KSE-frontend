@@ -1,6 +1,7 @@
 import "./global.css"
 import type { Metadata } from "next";
 import { IBM_Plex_Mono, IBM_Plex_Sans, Source_Serif_4 } from "next/font/google"
+import { ThemeProvider, ThemeScript } from "@/context/theme-context";
 
 const sourceSerif = Source_Serif_4({
   subsets: ["latin"],
@@ -38,8 +39,12 @@ export default function RootLayout({
     <html
       lang="en"
       className={`${sourceSerif.variable} ${plexSans.variable} ${plexMono.variable}`}
+      suppressHydrationWarning
     >
-      <body className="font-sans antialiased">{children}</body>
+      <body className="font-sans antialiased">
+        <ThemeScript />
+        <ThemeProvider>{children}</ThemeProvider>
+      </body>
     </html>
   );
 }

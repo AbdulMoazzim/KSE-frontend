@@ -33,9 +33,9 @@ export function StepChart({
   return (
     <div className="relative rounded-xl2 border border-line bg-panel p-6 pb-4 shadow-panel">
       <div className="mb-1.5 flex items-baseline justify-between">
-        <span className="font-mono text-[13px] tracking-wide text-navy">{ticker}</span>
+        <span className="font-mono text-[13px] tracking-wide text-ink">{ticker}</span>
         <span className="font-mono text-[13px] font-medium text-brand-green">
-          {price} <span className="text-[#A7ADC4]">PKR</span>
+          {price} <span className="text-[rgb(var(--c-slate))]">PKR</span>
         </span>
       </div>
       <p className="mb-3.5 text-[11px] text-slate">{sub}</p>
@@ -43,11 +43,11 @@ export function StepChart({
       <svg viewBox="0 0 460 150" className="block h-[150px] w-full">
         <defs>
           <linearGradient id="fillgrad" x1="0" y1="0" x2="0" y2="1">
-            <stop offset="0%" stopColor="#B8860B" stopOpacity="0.16" />
-            <stop offset="100%" stopColor="#B8860B" stopOpacity="0" />
+            <stop offset="0%" stopColor="rgb(var(--c-gold))" stopOpacity="0.16" />
+            <stop offset="100%" stopColor="rgb(var(--c-gold))" stopOpacity="0" />
           </linearGradient>
         </defs>
-        <g stroke="#EEEEE8" strokeWidth={1}>
+        <g stroke="rgb(var(--c-line))" strokeWidth={1}>
           <line x1="0" y1="30" x2="460" y2="30" />
           <line x1="0" y1="70" x2="460" y2="70" />
           <line x1="0" y1="110" x2="460" y2="110" />
@@ -60,20 +60,20 @@ export function StepChart({
           ref={lineRef}
           d={STEP_PATH}
           fill="none"
-          stroke="#B8860B"
+          stroke="rgb(var(--c-gold))"
           strokeWidth={2.5}
           strokeLinejoin="round"
           strokeLinecap="round"
         />
-        <polygon points="120,116 126,126 114,126" fill="#3F8F6C" />
-        <text x="120" y="140" textAnchor="middle" fontFamily="var(--font-plex-mono)" fontSize="9" fill="#3F8F6C">
+        <polygon points="120,116 126,126 114,126" fill="rgb(var(--c-brand-green))" />
+        <text x="120" y="140" textAnchor="middle" fontFamily="var(--font-plex-mono)" fontSize="9" fill="rgb(var(--c-brand-green))">
           BUY
         </text>
-        <polygon points="360,20 366,10 354,10" fill="#C0564F" />
-        <text x="360" y="8" textAnchor="middle" fontFamily="var(--font-plex-mono)" fontSize="9" fill="#C0564F">
+        <polygon points="360,20 366,10 354,10" fill="rgb(var(--c-brand-red))" />
+        <text x="360" y="8" textAnchor="middle" fontFamily="var(--font-plex-mono)" fontSize="9" fill="rgb(var(--c-brand-red))">
           SELL
         </text>
-        <circle cx="460" cy="20" r="4" fill="#B8860B">
+        <circle cx="460" cy="20" r="4" fill="rgb(var(--c-gold))">
           <animate attributeName="r" values="4;7;4" dur="2.2s" repeatCount="indefinite" />
           <animate attributeName="opacity" values="1;0.4;1" dur="2.2s" repeatCount="indefinite" />
         </circle>

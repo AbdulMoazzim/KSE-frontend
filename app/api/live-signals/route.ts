@@ -5,6 +5,7 @@ import { handleBackendError } from "@/lib/route-helpers";
 export async function GET(req: NextRequest) {
   try {
     const tenantId = req.headers.get("x-tenant-id");
+    console.log("tenent-id",tenantId)
     const data = await backendFetch(`/sentinel/live-signals${req.nextUrl.search}`, {
       headers: tenantId ? { "x-tenant-id": tenantId } : {},
     });

@@ -78,3 +78,24 @@ export interface DailyReport {
   riskFlags: string[];
   notes: string | null;
 }
+
+export interface ScreenerRow {
+  ticker: string;
+  sector: string | null;
+  close: number | null;
+  meanReversionZScore: number | null;
+  distFromMeanPct: number | null;
+  liquidityPercentile: number | null;
+  advNotionalPkr: number | null;
+  relativeStrengthPct: number | null;
+  error: string | null;
+}
+
+export interface SizingTier {
+  id: string;
+  name: string;
+  riskPerTradePct: number | null;
+  validated: boolean | null;
+  gated: boolean | null;
+  description: string | null;
+}

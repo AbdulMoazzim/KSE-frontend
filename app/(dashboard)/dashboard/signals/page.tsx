@@ -7,6 +7,7 @@ import { LoadingState, ErrorState, EmptyState } from "@/components/dashboard/asy
 import { apiGet, ApiError } from "@/lib/api-client";
 import { extractArray, normalizeSignal, normalizeSignalSummary } from "@/lib/normalize";
 import { LiveSignal, LiveSignalSummary } from "@/lib/types";
+import { useTimeframe } from "@/context/timeframe-context";
 
 function outcomeTone(outcome: string | null) {
   if (outcome === "WIN") return "bg-tint-green text-brand-green";
@@ -21,6 +22,7 @@ function fmtPct(value: number | null) {
 }
 
 export default function LiveSignalsPage() {
+  const { timeframe } = useTimeframe();
   const [signals, setSignals] = useState<LiveSignal[] | null>(null);
   const [summary, setSummary] = useState<LiveSignalSummary | null>(null);
   const [loading, setLoading] = useState(true);
@@ -31,8 +33,8 @@ export default function LiveSignalsPage() {
     setError(null);
     try {
       const [signalsRes, summaryRes] = await Promise.all([
-        apiGet("/api/live-signals", {"X-Tenant-ID": "1"}),
-        apiGet("/api/live-signals/summary", {"X-Tenant-ID": "1"}),
+        apiGet(`/api/live-signals?timeframe=${timeframe}`,{"X-Tenant-ID": "1"}),
+        apiGet(`/api/live-signals/summary?timeframe=${timeframe}`,{"X-Tenant-ID": "1"}),
       ]);
       setSignals(extractArray(signalsRes, ["signals"]).map(normalizeSignal));
       setSummary(normalizeSignalSummary(summaryRes));
@@ -43,7 +45,7 @@ export default function LiveSignalsPage() {
     } finally {
       setLoading(false);
     }
-  }, []);
+  }, [timeframe]);
 
   useEffect(() => {
     load();
@@ -95,7 +97,7 @@ export default function LiveSignalsPage() {
                 description="Signals appear here the moment the intraday or investment engine finds a setup worth tracking."
               />
             ) : (
-              <div className="overflow-hidden rounded-2xl border border-line bg-panel">
+              <div className="overflow-hidden rounded-2xl border border-line bg-card shadow-sm">
                 <div className="overflow-x-auto">
                   <table className="w-full text-left text-[13.5px]">
                     <thead>
@@ -115,7 +117,7 @@ export default function LiveSignalsPage() {
                       {signals.map((s) => (
                         <tr key={s.id} className="border-b border-line last:border-0 hover:bg-tint/60">
                           <td className="px-5 py-3.5 font-mono text-slate">{s.date ?? "—"}</td>
-                          <td className="px-5 py-3.5 font-mono font-medium text-navy">{s.ticker}</td>
+                          <td className="px-5 py-3.5 font-mono font-medium text-ink">{s.ticker}</td>
                           <td className="px-5 py-3.5 text-slate">{s.timeframe ?? "—"}</td>
                           <td
                             className={`px-5 py-3.5 ${
