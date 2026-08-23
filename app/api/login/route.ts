@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { envs } from "@/config/env";
 import { extractTenantId, TENANT_COOKIE } from "@/lib/tenant";
+import { logger, newRequestId } from "@/lib/logger";
 
 /**
  * Strips the backend's own Domain attribute (which points at
@@ -24,30 +25,66 @@ function rehostCookie(rawSetCookie: string): string {
 }
 
 export async function POST(req: Request) {
+  const requestId = newRequestId();
+  const startedAt = Date.now();
   const { email, password } = await req.json();
 
-  const backendRes = await fetch(`${envs.BACKEND_BASE_URL}/auth/login`, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      "X-API-Key": envs.API_KEY,
-    },
-    body: JSON.stringify({ email, password }),
-  });
+  let backendRes: Response;
+  try {
+    backendRes = await fetch(`${envs.BACKEND_BASE_URL}/auth/login`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "X-API-Key": envs.API_KEY,
+      },
+      body: JSON.stringify({ email, password }),
+    });
+  } catch (networkErr) {
+    logger.error("login_network_error", {
+      requestId,
+      durationMs: Date.now() - startedAt,
+      error: networkErr instanceof Error ? networkErr.message : String(networkErr),
+    });
+    return NextResponse.json(
+      { error: `Something went wrong. Please try again. (ref: ${requestId})` },
+      { status: 502 }
+    );
+  }
+
+  const durationMs = Date.now() - startedAt;
 
   if (!backendRes.ok) {
-    const errBody = await backendRes.text();
-    let message = errBody;
-    try {
-      const parsed = JSON.parse(errBody);
-      message = typeof parsed?.detail === "string" ? parsed.detail : errBody;
-    } catch {
-      // not JSON — use raw text
+    // Log the real reason (wrong password vs. unknown email vs. locked
+    // account, whatever the backend says) server-side only. The browser
+    // always gets the same generic message regardless of status, on
+    // purpose — distinguishing "no such user" from "wrong password" is
+    // exactly what lets an attacker enumerate valid accounts.
+    const errBody = await backendRes.text().catch(() => "");
+    logger.warn("login_failed", {
+      requestId,
+      email, // audit trail of the attempted email; never log the password
+      status: backendRes.status,
+      durationMs,
+      detail: errBody,
+    });
+
+    if (backendRes.status === 429) {
+      return NextResponse.json(
+        { error: "Too many sign-in attempts. Please wait a moment and try again." },
+        { status: 429 }
+      );
     }
-    return NextResponse.json({ error: message || "Sign-in failed." }, { status: backendRes.status });
+    if (backendRes.status >= 500) {
+      return NextResponse.json(
+        { error: `Something went wrong. Please try again. (ref: ${requestId})` },
+        { status: 502 }
+      );
+    }
+    return NextResponse.json({ error: "Invalid email or password." }, { status: 401 });
   }
 
   const data = await backendRes.json();
+  logger.info("login_succeeded", { requestId, durationMs });
   const response = NextResponse.json(data);
 
   // Forward the backend's refresh-token cookie(s), rehosted onto our own origin.

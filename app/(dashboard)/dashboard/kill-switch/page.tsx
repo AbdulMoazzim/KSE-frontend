@@ -62,7 +62,7 @@ export default function KillSwitchPage() {
         title="Kill Switch"
         subtitle="One switch, plainly labeled: it pauses new trades for everyone on this desk."
       />
-      <main className="flex-1 space-y-6 px-8 py-7">
+      <main className="flex-1 space-y-5 px-4 py-5 sm:space-y-6 sm:px-6 sm:py-7 lg:px-8">
         <div className="grid gap-6 lg:grid-cols-[1fr_1.3fr]">
           {/* Status card */}
           <div

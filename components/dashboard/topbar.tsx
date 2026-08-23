@@ -2,6 +2,7 @@
 
 import { StatusPill } from "@/components/badge";
 import { useKillSwitch } from "@/context/kill-switch-context";
+import { useMobileNav } from "@/context/mobile-nav-context";
 import { ThemeToggle } from "@/components/theme-toggle";
 import { TimeframeToggle } from "@/components/timeframe-toggle";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
@@ -24,14 +25,26 @@ export function Topbar({
   showTimeframe?: boolean;
 }) {
   const { status } = useKillSwitch();
+  const { open } = useMobileNav();
 
   return (
-    <div className="flex flex-wrap items-center justify-between gap-3 border-b border-line bg-card/80 px-8 py-5 backdrop-blur-md">
-      <div>
-        <h1 className="font-serif text-[21px] font-semibold text-foreground">{title}</h1>
-        {subtitle && <p className="mt-0.5 text-[13px] text-muted-foreground">{subtitle}</p>}
+    <div className="flex flex-wrap items-center justify-between gap-3 border-b border-line bg-card/80 px-4 py-4 backdrop-blur-md sm:px-6 sm:py-5 lg:px-8">
+      <div className="flex min-w-0 items-start gap-3">
+        <button
+          onClick={open}
+          aria-label="Open navigation"
+          className="mt-0.5 shrink-0 rounded-full p-1.5 text-muted-foreground hover:bg-muted hover:text-foreground lg:hidden"
+        >
+          <svg width={20} height={20} viewBox="0 0 20 20" fill="none">
+            <path d="M3 6h14M3 10h14M3 14h14" stroke="currentColor" strokeWidth={1.6} strokeLinecap="round" />
+          </svg>
+        </button>
+        <div className="min-w-0">
+          <h1 className="truncate font-serif text-[19px] font-semibold text-foreground sm:text-[21px]">{title}</h1>
+          {subtitle && <p className="mt-0.5 text-[12.5px] leading-relaxed text-muted-foreground sm:text-[13px]">{subtitle}</p>}
+        </div>
       </div>
-      <div className="flex items-center gap-3">
+      <div className="flex flex-wrap items-center gap-2.5 sm:gap-3">
         {showTimeframe && <TimeframeToggle />}
         {status.active ? (
           <StatusPill label="KILL SWITCH ACTIVE" tone="red" pulse />

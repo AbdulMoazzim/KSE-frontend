@@ -75,9 +75,9 @@ export default function FundamentalsPage() {
         subtitle="Look up a company's real financials and a quick DCF-style valuation read."
         showTimeframe={false}
       />
-      <main className="flex-1 space-y-6 px-8 py-7">
-        <form onSubmit={handleLookup} className="flex flex-wrap items-end gap-3">
-          <div className="flex-1 min-w-[220px]">
+      <main className="flex-1 space-y-5 px-4 py-5 sm:space-y-6 sm:px-6 sm:py-7 lg:px-8">
+        <form onSubmit={handleLookup} className="flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-end">
+          <div className="min-w-0 flex-1 sm:min-w-[220px]">
             <label htmlFor="ticker" className="mb-1.5 block text-[11.5px] font-semibold uppercase tracking-wide text-slate">
               Ticker
             </label>
@@ -86,13 +86,13 @@ export default function FundamentalsPage() {
               value={ticker}
               onChange={(e) => setTicker(e.target.value)}
               placeholder="e.g. HUBC"
-              className="w-full rounded-xl border-[1.5px] border-transparent bg-tint px-3.5 py-2.5 text-[14px] uppercase text-ink placeholder:normal-case placeholder:text-slate focus:border-gold focus:bg-panel focus:outline-none"
+              className="w-full rounded-xl border-[1.5px] border-transparent bg-tint px-3.5 py-2.5 text-[16px] uppercase text-ink placeholder:normal-case placeholder:text-slate focus:border-gold focus:bg-panel focus:outline-none sm:text-[14px]"
             />
           </div>
           <button
             type="submit"
             disabled={loading}
-            className="rounded-full bg-navy px-6 py-2.5 text-[13.5px] font-semibold text-white transition-colors hover:bg-navy-soft disabled:opacity-50"
+            className="w-full shrink-0 rounded-full bg-navy px-6 py-2.5 text-[13.5px] font-semibold text-white transition-colors hover:bg-navy-soft disabled:opacity-50 sm:w-auto"
           >
             {loading ? "Looking up…" : "Look up"}
           </button>
@@ -105,7 +105,7 @@ export default function FundamentalsPage() {
             ) : error ? (
               <ErrorState message={error} onRetry={() => submittedTicker && runLookup(submittedTicker)} />
             ) : (
-              <div className="grid gap-6 lg:grid-cols-2">
+              <div className="grid gap-5 sm:gap-6 xl:grid-cols-2">
                 <KeyValueCard
                   title={`${submittedTicker} · Fundamentals`}
                   data={fundamentals}
@@ -125,8 +125,8 @@ export default function FundamentalsPage() {
           </>
         )}
 
-        <div className="rounded-2xl border border-line bg-card shadow-sm p-6">
-          <h2 className="mb-1 text-[15.5px] font-semibold text-ink">Sentiment scratchpad</h2>
+        <div className="rounded-2xl border border-line bg-card shadow-sm p-5 sm:p-6">
+          <h2 className="mb-1 text-[15px] font-semibold text-ink sm:text-[15.5px]">Sentiment scratchpad</h2>
           <p className="mb-4 text-[12.5px] text-slate">
             Paste a headline, filing excerpt, or analyst note to get a quick sentiment read against a ticker.
           </p>
@@ -136,26 +136,26 @@ export default function FundamentalsPage() {
                 value={sentimentTicker}
                 onChange={(e) => setSentimentTicker(e.target.value)}
                 placeholder="Ticker"
-                className="rounded-xl border-[1.5px] border-transparent bg-tint px-3.5 py-2.5 text-[14px] uppercase text-ink placeholder:normal-case placeholder:text-slate focus:border-gold focus:bg-panel focus:outline-none"
+                className="w-full rounded-xl border-[1.5px] border-transparent bg-tint px-3.5 py-2.5 text-[16px] uppercase text-ink placeholder:normal-case placeholder:text-slate focus:border-gold focus:bg-panel focus:outline-none sm:text-[14px]"
               />
               <input
                 value={sentimentText}
                 onChange={(e) => setSentimentText(e.target.value)}
                 placeholder="Paste text to score…"
-                className="rounded-xl border-[1.5px] border-transparent bg-tint px-3.5 py-2.5 text-[14px] text-ink placeholder:text-slate focus:border-gold focus:bg-panel focus:outline-none"
+                className="w-full min-w-0 rounded-xl border-[1.5px] border-transparent bg-tint px-3.5 py-2.5 text-[16px] text-ink placeholder:text-slate focus:border-gold focus:bg-panel focus:outline-none sm:text-[14px]"
               />
             </div>
             <button
               type="submit"
               disabled={sentimentLoading}
-              className="rounded-full border border-line px-5 py-2 text-[13px] font-semibold text-ink transition-colors hover:border-navy disabled:opacity-50"
+              className="w-full rounded-full border border-line px-5 py-2 text-[13px] font-semibold text-ink transition-colors hover:border-navy disabled:opacity-50 sm:w-auto"
             >
               {sentimentLoading ? "Scoring…" : "Score sentiment"}
             </button>
           </form>
 
           {sentimentError && (
-            <div className="mt-4 rounded-xl border border-brand-red/30 bg-tint-red px-4 py-3 text-[13px] text-brand-red">
+            <div className="mt-4 break-words rounded-xl border border-brand-red/30 bg-tint-red px-4 py-3 text-[13px] text-brand-red">
               {sentimentError}
             </div>
           )}

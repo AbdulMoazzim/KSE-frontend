@@ -9,9 +9,9 @@ export function KillSwitchBanner() {
   if (!status.active) return null;
 
   return (
-    <div className="flex items-center justify-between gap-4 bg-brand-red px-8 py-3 text-white">
-      <div className="flex items-center gap-2.5 text-[13px]">
-        <svg width={16} height={16} viewBox="0 0 16 16" fill="none">
+    <div className="flex flex-wrap items-center justify-between gap-3 bg-brand-red px-4 py-3 text-white sm:gap-4 sm:px-6 lg:px-8">
+      <div className="flex min-w-0 items-center gap-2.5 text-[12.5px] sm:text-[13px]">
+        <svg width={16} height={16} viewBox="0 0 16 16" fill="none" className="shrink-0">
           <circle cx="8" cy="8" r="7" stroke="white" strokeWidth={1.4} />
           <path d="M8 4.5v4" stroke="white" strokeWidth={1.4} strokeLinecap="round" />
           <circle cx="8" cy="11" r="0.9" fill="white" />

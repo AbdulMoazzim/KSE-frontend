@@ -59,7 +59,7 @@ export default function TradeLogPage() {
         title="Trade Log"
         subtitle="Every position the engine has opened — what's still running, and what's already closed."
       />
-      <main className="flex-1 space-y-6 px-8 py-7">
+      <main className="flex-1 space-y-5 px-4 py-5 sm:space-y-6 sm:px-6 sm:py-7 lg:px-8">
         {loading && !openPositions && !closedTrades ? (
           <LoadingState label="Loading the trade log…" />
         ) : error ? (

@@ -2,7 +2,9 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { useEffect } from "react";
 import { Logo } from "@/components/logo";
+import { useMobileNav } from "@/context/mobile-nav-context";
 
 const navItems = [
   {
@@ -117,6 +119,13 @@ const configNavItems = [
 
 export function Sidebar() {
   const pathname = usePathname();
+  const { isOpen, close } = useMobileNav();
+
+  // Close the mobile drawer automatically whenever the route changes.
+  useEffect(() => {
+    close();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [pathname]);
 
   function renderItems(items: typeof navItems) {
     return items.map((item) => {
@@ -139,22 +148,46 @@ export function Sidebar() {
   }
 
   return (
-    <aside className="sticky top-0 flex h-screen w-[240px] flex-none flex-col overflow-y-auto border-r border-line bg-panel px-5 py-6">
-      <div className="mb-8 px-1">
-        <Logo showSub />
-      </div>
-      <nav className="flex flex-1 flex-col gap-1">
-        {renderItems(navItems)}
+    <>
+      {/* Mobile-only backdrop, shown behind the drawer while it's open. */}
+      {isOpen && (
+        <div
+          className="fixed inset-0 z-40 bg-ink/40 backdrop-blur-[1px] lg:hidden"
+          onClick={close}
+          aria-hidden="true"
+        />
+      )}
 
-        <div className="mb-1 mt-4 px-3 text-[10px] font-semibold uppercase tracking-wider text-slate">Research</div>
-        {renderItems(researchNavItems)}
+      <aside
+        className={`fixed inset-y-0 left-0 z-50 flex h-screen w-[240px] flex-none flex-col overflow-y-auto border-r border-line bg-panel px-5 py-6 transition-transform duration-200 ease-out lg:sticky lg:top-0 lg:z-auto lg:translate-x-0 ${
+          isOpen ? "translate-x-0" : "-translate-x-full"
+        }`}
+      >
+        <div className="mb-8 flex items-center justify-between px-1">
+          <Logo showSub />
+          <button
+            onClick={close}
+            aria-label="Close navigation"
+            className="rounded-full p-1.5 text-muted-foreground hover:bg-muted hover:text-foreground lg:hidden"
+          >
+            <svg width={18} height={18} viewBox="0 0 18 18" fill="none">
+              <path d="M4 4l10 10M14 4L4 14" stroke="currentColor" strokeWidth={1.6} strokeLinecap="round" />
+            </svg>
+          </button>
+        </div>
+        <nav className="flex flex-1 flex-col gap-1">
+          {renderItems(navItems)}
 
-        <div className="mb-1 mt-4 px-3 text-[10px] font-semibold uppercase tracking-wider text-slate">Configuration</div>
-        {renderItems(configNavItems)}
-      </nav>
-      <div className="mt-4 rounded-xl border border-line bg-tint px-3.5 py-3 text-[11.5px] leading-relaxed text-slate">
-        Decision-support only. This system does not place trades autonomously.
-      </div>
-    </aside>
+          <div className="mb-1 mt-4 px-3 text-[10px] font-semibold uppercase tracking-wider text-slate">Research</div>
+          {renderItems(researchNavItems)}
+
+          <div className="mb-1 mt-4 px-3 text-[10px] font-semibold uppercase tracking-wider text-slate">Configuration</div>
+          {renderItems(configNavItems)}
+        </nav>
+        <div className="mt-4 rounded-xl border border-line bg-tint px-3.5 py-3 text-[11.5px] leading-relaxed text-slate">
+          Decision-support only. This system does not place trades autonomously.
+        </div>
+      </aside>
+    </>
   );
 }

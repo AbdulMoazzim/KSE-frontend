@@ -97,7 +97,7 @@ export default function OpsHealthPage() {
         title="Ops · System Health"
         subtitle="Internal monitoring — did today's run actually happen, and is anything stale."
       />
-      <main className="flex-1 space-y-6 px-8 py-7">
+      <main className="flex-1 space-y-5 px-4 py-5 sm:space-y-6 sm:px-6 sm:py-7 lg:px-8">
         {loading && !data ? (
           <LoadingState label="Checking system health…" />
         ) : error ? (

@@ -67,7 +67,7 @@ export default function SizingTiersPage() {
         title="Position Sizing"
         subtitle="Every tier here is real and validated — nothing shown is aspirational. Selection is enforced server-side, not just a UI warning."
       />
-      <main className="flex-1 space-y-6 px-8 py-7">
+      <main className="flex-1 space-y-5 px-4 py-5 sm:space-y-6 sm:px-6 sm:py-7 lg:px-8">
         {loading && !tiers ? (
           <LoadingState label="Loading sizing tiers…" />
         ) : error ? (

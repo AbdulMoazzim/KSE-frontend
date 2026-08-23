@@ -57,7 +57,7 @@ export default function LiveSignalsPage() {
         title="Live Signals"
         subtitle="What the engine has found and traded — a plain, honest record, not a projection."
       />
-      <main className="flex-1 space-y-6 px-8 py-7">
+      <main className="flex-1 space-y-5 px-4 py-5 sm:space-y-6 sm:px-6 sm:py-7 lg:px-8">
         {loading && !signals ? (
           <LoadingState label="Loading live signals…" />
         ) : error ? (

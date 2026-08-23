@@ -75,7 +75,7 @@ export default function AnalyticsPage() {
             : "One pass over the whole watchlist: how stretched, how liquid, and how it's doing versus its sector."
         }
       />
-      <main className="flex-1 space-y-6 px-8 py-7">
+      <main className="flex-1 space-y-5 px-4 py-5 sm:space-y-6 sm:px-6 sm:py-7 lg:px-8">
         <div className="rounded-2xl border border-line bg-tint/40 p-4 text-[13px] leading-relaxed text-slate">
           <strong className="text-ink">How to read this:</strong> a mean-reversion z-score near zero means a
           ticker is trading close to its own recent average — the further from zero (either direction), the more
