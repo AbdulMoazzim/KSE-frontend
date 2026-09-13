@@ -39,3 +39,10 @@ export async function apiPost<T = unknown>(path: string, body?: unknown, headers
   if (!res.ok) throw new ApiError(await readError(res), res.status);
   return res.json();
 }
+
+/** POST a FormData body (file uploads) to one of our own /api/... routes. No Content-Type header — the browser sets its own multipart boundary. */
+export async function apiPostForm<T = unknown>(path: string, formData: FormData, headers?: HeadersInit): Promise<T> {
+  const res = await fetch(path, { method: "POST", headers, body: formData });
+  if (!res.ok) throw new ApiError(await readError(res), res.status);
+  return res.json();
+}

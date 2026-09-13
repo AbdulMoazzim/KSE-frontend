@@ -1,41 +1,29 @@
-/** Name of the cookie that carries the signed-in user's tenant id to every backend call. */
+/** Name of the httpOnly cookie that remembers which tenant a signed-in user belongs to. */
 export const TENANT_COOKIE = "kse_tenant_id";
 
 /**
- * The exact field name for tenant id in the login/register response wasn't
- * pinned down against the live schema (the Swagger export only shows a
- * generic "string" example, not the real response model). This tries a
- * short list of likely candidates — snake_case first, since the backend is
- * FastAPI — including one level of nesting under `user` / `tenant`.
- *
- * If none match, sign-in still succeeds; every backend call will just go
- * out without X-Tenant-ID, and the backend will (correctly) reject
- * tenant-scoped endpoints with a clear error until this is confirmed.
+ * Pulls the tenant id out of a /auth/login response. Tries the shapes the
+ * backend is known to use, falls back to null if none match (the caller
+ * just won't set the cookie, which only affects auto-attaching
+ * X-Tenant-ID on later requests — login itself still succeeds).
  */
-export function extractTenantId(payload: unknown): string | null {
-  if (typeof payload !== "object" || payload === null) return null;
-  const record = payload as Record<string, unknown>;
+export function extractTenantId(data: unknown): string | null {
+  if (typeof data !== "object" || data === null) return null;
+  const record = data as Record<string, unknown>;
 
-  const direct = [
-    "tenant_id",
-    "tenantId",
-    "X-Tenant-ID",
-    "x_tenant_id",
-  ];
-  for (const key of direct) {
-    const value = record[key];
-    if (value !== undefined && value !== null) return String(value);
+  const direct = record.tenant_id ?? record.tenantId;
+  if (direct !== undefined && direct !== null) return String(direct);
+
+  const tenant = record.tenant;
+  if (typeof tenant === "object" && tenant !== null) {
+    const id = (tenant as Record<string, unknown>).id;
+    if (id !== undefined && id !== null) return String(id);
   }
 
-  for (const wrapperKey of ["user", "tenant", "data"]) {
-    const wrapper = record[wrapperKey];
-    if (typeof wrapper === "object" && wrapper !== null) {
-      const nested = wrapper as Record<string, unknown>;
-      for (const key of ["tenant_id", "tenantId", "id"]) {
-        const value = nested[key];
-        if (value !== undefined && value !== null) return String(value);
-      }
-    }
+  const user = record.user;
+  if (typeof user === "object" && user !== null) {
+    const id = (user as Record<string, unknown>).tenant_id;
+    if (id !== undefined && id !== null) return String(id);
   }
 
   return null;

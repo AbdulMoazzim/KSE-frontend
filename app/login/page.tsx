@@ -3,62 +3,52 @@
 import Link from "next/link";
 import { FormEvent, useState } from "react";
 import { Logo, LogoMark } from "@/components/logo";
-import { Watermark } from "@/components/watermark";
 import { useRouter } from "next/navigation";
-import axios from "axios";
+import { apiPost, ApiError } from "@/lib/api-client";
 
 export default function LoginPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const router = useRouter();
-  const [error, setError] = useState<string|null>(null);
+  const [error, setError] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
 
-  function handleSubmit(e: FormEvent) {
+  async function handleSubmit(e: FormEvent) {
     e.preventDefault();
+    setError(null);
     setSubmitting(true);
-    axios.post("/api/login", {
-      email,
-      password
-    }).then((response) => {
-      if (response.status === 422) {
-        setError("Invalid Credentials");
-      } else {
-        router.push("/dashboard");
-      }
-    })
-    .catch(() => {
-      setError("Error Occured during request!");
-    }).finally(()=>{
+    try {
+      await apiPost("/api/login", { email, password });
+      router.push("/dashboard");
+    } catch (err) {
+      setError(err instanceof ApiError ? err.message : "Something went wrong. Please try again.");
       setSubmitting(false);
-    })
+    }
   }
 
   return (
-    <div className="relative flex min-h-screen flex-col overflow-x-hidden bg-gradient-to-b from-tint to-bg">
-      <Watermark opacity="opacity-[0.035]" />
-
-      <header className="relative z-10 flex items-center justify-between px-6 py-5 md:px-10">
+    <div className="relative flex min-h-screen flex-col overflow-x-hidden bg-bg">
+      <header className="relative z-10 flex items-center justify-between px-5 py-5 sm:px-6 md:px-10">
         <Logo showSub />
         <Link
           href="/"
-          className="rounded-full border border-line bg-panel px-4 py-2 text-[13px] text-slate transition-colors hover:border-navy hover:text-ink"
+          className="rounded-md border border-line bg-panel px-3.5 py-2 text-[12.5px] text-slate transition-colors hover:border-navy hover:text-ink sm:px-4 sm:text-[13px]"
         >
           ← Back to overview
         </Link>
       </header>
 
-      <main className="relative z-10 flex flex-1 items-center justify-center px-5 pb-16 pt-5">
-        <div className="w-full max-w-[400px] rounded-xl2 border border-line bg-panel p-9 pb-8 shadow-panel">
+      <main className="relative z-10 flex flex-1 items-center justify-center px-4 pb-12 pt-5 sm:px-5 sm:pb-16">
+        <div className="w-full max-w-[400px] rounded-lg border border-line bg-panel p-6 pb-7 shadow-panel sm:p-9 sm:pb-8">
           <div className="mb-4 flex justify-center">
-            <div className="flex h-[60px] w-[60px] items-center justify-center rounded-2xl bg-tint">
-              <LogoMark size={32} />
+            <div className="flex h-[56px] w-[56px] items-center justify-center rounded-lg bg-tint sm:h-[60px] sm:w-[60px]">
+              <LogoMark size={30} />
             </div>
           </div>
-          <h1 className="mb-1.5 text-center font-serif text-[22px] font-semibold text-ink">
+          <h1 className="mb-1.5 text-center font-sans text-[20px] font-bold tracking-tight text-ink sm:text-[22px]">
             Sign in to your desk
           </h1>
-          <p className="mb-7 text-center text-[13px] text-slate">
+          <p className="mb-6 text-center text-[13px] text-slate sm:mb-7">
             Institutional access, scoped to your tenant.
           </p>
 
@@ -69,9 +59,7 @@ export default function LoginPage() {
                 <path d="M8 4.5v4" stroke="rgb(var(--c-brand-red))" strokeWidth={1.4} strokeLinecap="round" />
                 <circle cx="8" cy="11" r="0.9" fill="rgb(var(--c-brand-red))" />
               </svg>
-              <span>
-                <span>{error}</span>
-              </span>
+              <span>{error}</span>
             </div>
           )}
 
@@ -114,9 +102,9 @@ export default function LoginPage() {
             <button
               type="submit"
               disabled={submitting}
-              className="w-full rounded-full bg-gold py-3.5 text-[14.5px] font-semibold text-on-gold shadow-soft transition-all hover:-translate-y-px hover:bg-gold-bright disabled:translate-y-0 disabled:cursor-not-allowed disabled:opacity-55"
+              className="w-full rounded-md bg-gold py-3.5 text-[14.5px] font-semibold text-on-gold shadow-soft transition-all hover:-translate-y-px hover:bg-gold-bright disabled:translate-y-0 disabled:cursor-not-allowed disabled:opacity-55"
             >
-              Sign in
+              {submitting ? "Signing in…" : "Sign in"}
             </button>
           </form>
 

@@ -30,7 +30,7 @@ export function ErrorState({
   onRetry?: () => void;
 }) {
   return (
-    <div className="flex flex-col items-center gap-3 rounded-2xl border border-destructive/30 bg-tint-red p-10 text-center">
+    <div className="flex flex-col items-center gap-3 rounded-lg border border-destructive/30 bg-tint-red p-10 text-center">
       <svg width={28} height={28} viewBox="0 0 28 28" fill="none">
         <circle cx="14" cy="14" r="12" stroke="rgb(var(--c-brand-red))" strokeWidth={1.8} />
         <path d="M14 8v7" stroke="rgb(var(--c-brand-red))" strokeWidth={1.8} strokeLinecap="round" />
@@ -57,7 +57,7 @@ export function EmptyState({
   description: string;
 }) {
   return (
-    <div className="flex flex-col items-center gap-2 rounded-2xl border border-dashed border-line bg-muted/40 p-10 text-center">
+    <div className="flex flex-col items-center gap-2 rounded-lg border border-dashed border-line bg-muted/40 p-10 text-center">
       <svg width={28} height={28} viewBox="0 0 28 28" fill="none">
         <rect x="4" y="7" width="20" height="15" rx="2" stroke="rgb(var(--c-slate))" strokeWidth={1.6} />
         <path d="M4 12h20" stroke="rgb(var(--c-slate))" strokeWidth={1.6} />

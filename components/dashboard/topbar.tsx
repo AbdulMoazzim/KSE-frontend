@@ -1,11 +1,13 @@
 "use client";
 
+import { useRouter } from "next/navigation";
 import { StatusPill } from "@/components/badge";
 import { useKillSwitch } from "@/context/kill-switch-context";
 import { useMobileNav } from "@/context/mobile-nav-context";
 import { ThemeToggle } from "@/components/theme-toggle";
 import { TimeframeToggle } from "@/components/timeframe-toggle";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { apiPost } from "@/lib/api-client";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -26,6 +28,16 @@ export function Topbar({
 }) {
   const { status } = useKillSwitch();
   const { open } = useMobileNav();
+  const router = useRouter();
+
+  async function handleSignOut() {
+    try {
+      await apiPost("/api/logout");
+    } finally {
+      router.push("/login");
+      router.refresh();
+    }
+  }
 
   return (
     <div className="flex flex-wrap items-center justify-between gap-3 border-b border-line bg-card/80 px-4 py-4 backdrop-blur-md sm:px-6 sm:py-5 lg:px-8">
@@ -40,7 +52,7 @@ export function Topbar({
           </svg>
         </button>
         <div className="min-w-0">
-          <h1 className="truncate font-serif text-[19px] font-semibold text-foreground sm:text-[21px]">{title}</h1>
+          <h1 className="truncate font-sans text-[19px] font-bold tracking-tight text-foreground sm:text-[21px]">{title}</h1>
           {subtitle && <p className="mt-0.5 text-[12.5px] leading-relaxed text-muted-foreground sm:text-[13px]">{subtitle}</p>}
         </div>
       </div>
@@ -64,7 +76,9 @@ export function Topbar({
             <DropdownMenuItem>Account settings</DropdownMenuItem>
             <DropdownMenuItem>Tenant preferences</DropdownMenuItem>
             <DropdownMenuSeparator />
-            <DropdownMenuItem className="text-destructive focus:bg-tint-red">Sign out</DropdownMenuItem>
+            <DropdownMenuItem className="text-destructive focus:bg-tint-red" onClick={handleSignOut}>
+              Sign out
+            </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
       </div>

@@ -49,7 +49,7 @@ export default function DailyReportPage() {
           <EmptyState title="No report yet" description="Check back once the trading day has started." />
         ) : (
           <>
-            <div className="rounded-2xl border border-line bg-card shadow-sm p-6">
+            <div className="rounded-lg border border-line bg-card shadow-sm p-6">
               <p className="text-[13px] uppercase tracking-wide text-slate">{report.date ?? "Today"}</p>
               <p className="mt-2 text-[15px] leading-relaxed text-ink">
                 {report.notes ?? "No additional notes were provided for today."}
@@ -67,7 +67,7 @@ export default function DailyReportPage() {
               />
             </div>
 
-            <div className="rounded-2xl border border-line bg-card shadow-sm p-6">
+            <div className="rounded-lg border border-line bg-card shadow-sm p-6">
               <h2 className="mb-3 text-[15.5px] font-semibold text-ink">Risk flags</h2>
               {report.riskFlags.length === 0 ? (
                 <p className="text-[13.5px] text-slate">Nothing flagged today — no unusual activity to review.</p>

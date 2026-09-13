@@ -86,6 +86,28 @@ const researchNavItems = [
       </svg>
     ),
   },
+  {
+    href: "/dashboard/financials",
+    label: "Financials",
+    icon: (active: boolean) => (
+      <svg width={18} height={18} viewBox="0 0 18 18" fill="none">
+        <rect x="4" y="2" width="10" height="14" rx="1.5" stroke={active ? "rgb(var(--c-ink))" : "rgb(var(--c-slate))"} strokeWidth={1.6} />
+        <path d="M6.5 6h5M6.5 9h2.5" stroke={active ? "rgb(var(--c-ink))" : "rgb(var(--c-slate))"} strokeWidth={1.4} strokeLinecap="round" />
+        <path d="M6.5 12.5h5" stroke={active ? "rgb(var(--c-gold))" : "rgb(var(--c-slate))"} strokeWidth={1.4} strokeLinecap="round" />
+      </svg>
+    ),
+  },
+  {
+    href: "/dashboard/docintel",
+    label: "Document Intelligence",
+    icon: (active: boolean) => (
+      <svg width={18} height={18} viewBox="0 0 18 18" fill="none">
+        <path d="M5 2h6l3 3v11H5z" stroke={active ? "rgb(var(--c-ink))" : "rgb(var(--c-slate))"} strokeWidth={1.5} strokeLinejoin="round" />
+        <path d="M11 2v3h3" stroke={active ? "rgb(var(--c-ink))" : "rgb(var(--c-slate))"} strokeWidth={1.5} strokeLinejoin="round" />
+        <path d="M7 10.5l1.6 1.6L11.5 8.5" stroke={active ? "rgb(var(--c-gold))" : "rgb(var(--c-slate))"} strokeWidth={1.5} strokeLinecap="round" strokeLinejoin="round" />
+      </svg>
+    ),
+  },
 ];
 
 const configNavItems = [

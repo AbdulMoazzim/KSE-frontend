@@ -76,7 +76,6 @@ const config: Config = {
         },
       },
       fontFamily: {
-        serif: ["var(--font-source-serif)", "serif"],
         sans: ["var(--font-plex-sans)", "sans-serif"],
         mono: ["var(--font-plex-mono)", "monospace"],
       },

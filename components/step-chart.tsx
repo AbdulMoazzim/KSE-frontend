@@ -31,7 +31,7 @@ export function StepChart({
   }, []);
 
   return (
-    <div className="relative rounded-xl2 border border-line bg-panel p-6 pb-4 shadow-panel">
+    <div className="relative rounded-lg border border-line bg-panel p-6 pb-4 shadow-panel">
       <div className="mb-1.5 flex items-baseline justify-between">
         <span className="font-mono text-[13px] tracking-wide text-ink">{ticker}</span>
         <span className="font-mono text-[13px] font-medium text-brand-green">

@@ -3,7 +3,6 @@
 import Link from "next/link";
 import { useCallback, useEffect, useState } from "react";
 import { Topbar } from "@/components/dashboard/topbar";
-import { StatCard } from "@/components/dashboard/stat-card";
 import { LoadingState, ErrorState, EmptyState } from "@/components/dashboard/async-state";
 import { StepChart } from "@/components/step-chart";
 import { apiGet, ApiError } from "@/lib/api-client";
@@ -76,39 +75,45 @@ export default function DashboardOverviewPage() {
           <ErrorState message={error} onRetry={load} />
         ) : (
           <>
-            <div className="grid gap-5 md:grid-cols-4">
-              <StatCard
-                label="Open positions"
-                value={positions ? String(positions.length) : "—"}
-                sub="Across the 1H + 1D engines"
-              />
-              <StatCard
-                label="Avg. unrealized"
-                value={fmtPct(avgUnrealized)}
-                tone={avgUnrealized !== null && avgUnrealized >= 0 ? "green" : "red"}
-                sub="Mark-to-market, blended across open positions"
-              />
-              <StatCard
-                label="Signals today"
-                value={summary?.totalCount !== null && summary?.totalCount !== undefined ? String(summary.totalCount) : "—"}
-                sub={
-                  summary?.wins !== null && summary?.losses !== null
+            <div className="grid grid-cols-2 gap-px overflow-hidden rounded-lg border border-line bg-line md:grid-cols-4">
+              <div className="bg-panel p-4">
+                <div className="text-[11px] text-slate">Open positions</div>
+                <div className="mt-1 font-mono text-[20px] text-ink">{positions ? positions.length : "—"}</div>
+                <div className="mt-1 text-[11px] text-slate">Across the 1H + 1D engines</div>
+              </div>
+              <div className="bg-panel p-4">
+                <div className="text-[11px] text-slate">Avg. unrealized</div>
+                <div className={`mt-1 font-mono text-[20px] ${avgUnrealized !== null && avgUnrealized >= 0 ? "text-brand-green" : "text-brand-red"}`}>
+                  {fmtPct(avgUnrealized)}
+                </div>
+                <div className="mt-1 text-[11px] text-slate">Mark-to-market, blended</div>
+              </div>
+              <div className="bg-panel p-4">
+                <div className="text-[11px] text-slate">Signals today</div>
+                <div className="mt-1 font-mono text-[20px] text-ink">
+                  {summary?.totalCount !== null && summary?.totalCount !== undefined ? summary.totalCount : "—"}
+                </div>
+                <div className="mt-1 text-[11px] text-slate">
+                  {summary?.wins !== null && summary?.losses !== null
                     ? `${summary?.wins ?? 0} win · ${summary?.losses ?? 0} loss`
-                    : "Waiting on today's activity"
-                }
-              />
-              <StatCard
-                label="Kill switch"
-                value={killSwitchStatus.active ? "ON" : "OFF"}
-                tone={killSwitchStatus.active ? "red" : "green"}
-                sub={killSwitchStatus.active ? "New orders are paused tenant-wide" : "Trading active tenant-wide"}
-              />
+                    : "Waiting on today's activity"}
+                </div>
+              </div>
+              <div className="bg-panel p-4">
+                <div className="text-[11px] text-slate">Kill switch</div>
+                <div className={`mt-1 font-mono text-[20px] ${killSwitchStatus.active ? "text-brand-red" : "text-brand-green"}`}>
+                  {killSwitchStatus.active ? "ON" : "OFF"}
+                </div>
+                <div className="mt-1 text-[11px] text-slate">
+                  {killSwitchStatus.active ? "New orders paused tenant-wide" : "Trading active tenant-wide"}
+                </div>
+              </div>
             </div>
 
             <div className="grid gap-6 lg:grid-cols-[1fr_1.2fr]">
               <StepChart />
 
-              <div className="rounded-2xl border border-line bg-card shadow-sm p-6">
+              <div className="rounded-lg border border-line bg-card shadow-sm p-6">
                 <div className="mb-1 flex items-center justify-between">
                   <h2 className="text-[15.5px] font-semibold text-ink">Recent live signals</h2>
                   <Link href="/dashboard/signals" className="text-[12.5px] font-medium text-gold hover:text-gold-bright">
@@ -159,7 +164,7 @@ export default function DashboardOverviewPage() {
               </div>
             </div>
 
-            <div className="rounded-2xl border border-line bg-card shadow-sm p-6">
+            <div className="rounded-lg border border-line bg-card shadow-sm p-6">
               <div className="mb-1 flex items-center justify-between">
                 <h2 className="text-[15.5px] font-semibold text-ink">Open positions</h2>
                 <Link href="/dashboard/trade-log" className="text-[12.5px] font-medium text-gold hover:text-gold-bright">

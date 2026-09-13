@@ -131,3 +131,79 @@ response models). Two different strategies are used depending on how much was ac
 4. If an endpoint's real response shape turns out to differ from what's assumed here, that's a
    one-line fix in `lib/normalize.ts`, not a page rewrite — the pages only ever read from the
    stable types in `lib/types.ts`.
+
+## 9. Changelog — most recent pass
+
+**Auth**
+- `POST /api/register` now calls the backend's `/auth/institutional/register` (not the old gated
+  `/auth/register`) — this is the endpoint that actually matches this page's copy ("request
+  institutional access", reviewed before activation). It requires a `tier` field alongside
+  email/password/company_name; the register page now has a real Tier 1 / Tier 2 selector wired to
+  it. **The exact backend enum values for `tier` weren't confirmed** — `tier_1`/`tier_2` are best
+  guesses from the pricing mockup labels. If the backend 422s on submit, check the real accepted
+  values in `/docs` and update the `TIERS` array in `app/register/page.tsx`.
+- `POST /api/login` now distinguishes two kinds of failure: deliberate account-state messages the
+  backend wants shown as-is (pending review / rejected / suspended / trial expired / email not
+  verified — matched by keyword in `app/api/login/route.ts`, since the exact wording wasn't
+  confirmed either), versus wrong password / unknown email / locked account, which stays a single
+  generic "Invalid email or password" so a 401 can't be used to enumerate real accounts.
+- Fixed a real bug in both login and register pages: they were using `axios` with an
+  `if (response.status === 422)` check that could never fire (axios rejects on non-2xx by
+  default), so successful registration silently did nothing and every real error from our own API
+  route got swallowed into a generic "Error Occured during request!" Both now use the existing
+  `apiPost`/`ApiError` helpers from `lib/api-client.ts`, which actually surface the message text.
+- Wired the topbar's "Sign out" menu item, which had no handler at all, to `/api/logout`.
+
+**Responsiveness / design**
+- Fixed a real layout bug in `components/dashboard/kv-block/index.tsx`: nested objects always
+  tried to lay out in 2 columns via `sm:grid-cols-2`, which responds to *viewport* width, not the
+  actual space available inside a nested container. A field 3–4 levels deep inside a 2-column page
+  layout was squeezing into ~140px columns and wrapping every label into an unreadable
+  one-word-per-line stack (visible on the Financials page, e.g. under Corporate Analysis →
+  Solvency and Credit Metrics → Altman Z-Score → Components). Fixed with a `depth` prop: only the
+  top-level object of a `KeyValueBlock` uses a 2-column grid: everything nested inside it — at any
+  depth — now always stacks single-column, which is legible regardless of how deep the nesting
+  goes or how narrow its container is.
+- Removed `font-serif` (Source Serif 4) everywhere — it had been reintroduced somewhere along the
+  way despite the app's actual design direction (the 7 HTML mockups you shared) using IBM Plex Sans
+  bold for every heading, no serif at all. Removed the font import entirely, not just the class
+  usages, so it's no longer fetched from Google Fonts at build time either.
+- Fixed the register page's name/company and password/confirm field pairs, which used
+  `grid-cols-2` unconditionally — cramped on any screen under ~640px. Now `grid-cols-1
+  sm:grid-cols-2`.
+
+## 10. Financials — "Other Data" tab redesign
+
+The Financials page's "Other data" tab used to run everything — filing metadata *and* the entire
+corporate analysis payload (DuPont breakdown, Altman Z-Score, Piotroski F-Score, DCF valuation) —
+through the generic `KeyValueBlock` grid. That's the right tool when a shape is genuinely unknown,
+but once real data confirmed the actual field names, a flat grid was doing a disservice to data
+that has real, well-known analytical structure. It's now a hand-built view
+(`components/dashboard/financials/`):
+
+- **Key Ratios** — a stat-tile row for `derived_ratios` (net margin, ROE, ROA).
+- **DuPont Profitability Breakdown** — rendered as the actual identity it is:
+  Margin × Turnover × Leverage = ROE, not four disconnected numbers.
+- **Altman Z-Score** — the score plus a colored risk-zone badge (green/amber/red based on the zone
+  string), with the component ratios listed below it.
+- **Piotroski F-Score** — score out of 9 shown as a filled-dot gauge, plus the individual
+  yes/no criteria as a checklist.
+- **Intrinsic Valuation (DCF)** — the headline PKR figure first, supporting breakdown below it.
+- **Filing & Verification** — deliberately demoted to a collapsed `<details>` section, since
+  ticker/sector/source-document/verification-notes is provenance metadata, not analysis an analyst
+  is scanning for.
+- Anything not mapped into one of the sections above still renders through the original
+  `KeyValueBlock` in an "Additional fields" card at the bottom — nothing from the real response is
+  ever silently dropped, even as new hand-built sections get added over time.
+
+New types/normalizers: `CorporateAnalysis`, `FundamentalsFiling`, `DuPontBreakdown`,
+`AltmanZScore`, `PiotroskiFScore`, `DcfValuation` in `lib/types.ts` /
+`normalizeCorporateAnalysis`, `normalizeFundamentalsFiling` in `lib/normalize.ts`. Field names
+were taken from a real observed response rather than the docs (which only showed generic `"string"`
+examples for these two endpoints), so they're more trustworthy than the rest of the app's
+normalizers — but still defensive (candidate-key picking), since a different ticker or filing type
+could plausibly omit a section or use slightly different nesting.
+
+The Income Statement / Balance Sheet / Cash Flow tabs still use the generic grid — their exact
+field-level shape hasn't been confirmed the way "Other data" now has been. Same promotion path
+applies whenever that's confirmed.

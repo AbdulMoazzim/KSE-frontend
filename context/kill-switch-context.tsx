@@ -32,7 +32,7 @@ export function KillSwitchProvider({ children }: { children: React.ReactNode }) 
     setLoading(true);
     setError(null);
     try {
-      const raw = await apiGet("/api/kill-switch/status",{"X-Tenant-ID": "1"});
+      const raw = await apiGet("/api/kill-switch/status", { "X-Tenant-ID": "1" });
       setStatus(normalizeKillSwitchStatus(raw));
     } catch (err) {
       setError(
@@ -54,7 +54,7 @@ export function KillSwitchProvider({ children }: { children: React.ReactNode }) 
 
   const activate = useCallback(
     async (reason: string) => {
-      await apiPost("/api/kill-switch/activate", { reason,"X-Tenant-ID": "1" });
+      await apiPost("/api/kill-switch/activate", { reason }, { "X-Tenant-ID": "1" });
       await refresh();
     },
     [refresh]
@@ -62,7 +62,7 @@ export function KillSwitchProvider({ children }: { children: React.ReactNode }) 
 
   const deactivate = useCallback(
     async (reason: string) => {
-      await apiPost("/api/kill-switch/deactivate", { reason, "X-Tenant-ID": "1" });
+      await apiPost("/api/kill-switch/deactivate", { reason }, { "X-Tenant-ID": "1" });
       await refresh();
     },
     [refresh]

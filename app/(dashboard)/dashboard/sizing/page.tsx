@@ -26,8 +26,8 @@ export default function SizingTiersPage() {
     setError(null);
     try {
       const [tiersRes, statusRes] = await Promise.all([
-        apiGet("/api/sentinel/sizing-tiers", {"X-Tenant-ID": "1"}),
-        apiGet(`/api/sentinel/ops/sizing-tier-status?timeframe=${timeframe}`,{"X-Tenant-ID": "1"}),
+        apiGet("/api/sentinel/sizing-tiers", { "X-Tenant-ID": "1" }),
+        apiGet(`/api/sentinel/ops/sizing-tier-status?timeframe=${timeframe}`, { "X-Tenant-ID": "1" }),
       ]);
       setTiers(extractArray(tiersRes, ["tiers"]).map(normalizeSizingTier));
       setStatus(statusRes);
@@ -50,7 +50,7 @@ export default function SizingTiersPage() {
       await apiPost("/api/sentinel/sizing-tiers/select", {
         tier_id: tierId,
         override_confirmed: confirmOverride,
-      });
+      }, { "X-Tenant-ID": "1" });
       setSelecting(null);
       setConfirmOverride(false);
       load();
@@ -87,7 +87,7 @@ export default function SizingTiersPage() {
             ) : (
               <div className="grid gap-5 md:grid-cols-2 lg:grid-cols-3">
                 {tiers.map((tier) => (
-                  <div key={tier.id} className="flex flex-col rounded-2xl border border-line bg-card shadow-sm p-6">
+                  <div key={tier.id} className="flex flex-col rounded-lg border border-line bg-card shadow-sm p-6">
                     <div className="mb-3 flex items-center justify-between">
                       <h3 className="text-[15px] font-semibold text-ink">{tier.name}</h3>
                       {tier.gated && (

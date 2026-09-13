@@ -97,30 +97,30 @@ export default function LiveSignalsPage() {
                 description="Signals appear here the moment the intraday or investment engine finds a setup worth tracking."
               />
             ) : (
-              <div className="overflow-hidden rounded-2xl border border-line bg-card shadow-sm">
+              <div className="overflow-hidden rounded-lg border border-line bg-card shadow-sm">
                 <div className="overflow-x-auto">
                   <table className="w-full text-left text-[13.5px]">
                     <thead>
                       <tr className="border-b border-line text-[11px] uppercase tracking-wide text-slate">
-                        <th className="px-5 py-3.5 font-medium">Date</th>
-                        <th className="px-5 py-3.5 font-medium">Ticker</th>
-                        <th className="px-5 py-3.5 font-medium">Timeframe</th>
-                        <th className="px-5 py-3.5 font-medium">Direction</th>
-                        <th className="px-5 py-3.5 font-medium">Confluence</th>
-                        <th className="px-5 py-3.5 font-medium">Entry</th>
-                        <th className="px-5 py-3.5 font-medium">Exit</th>
-                        <th className="px-5 py-3.5 font-medium">Outcome</th>
-                        <th className="px-5 py-3.5 text-right font-medium">Return</th>
+                        <th className="px-4 py-2.5 font-medium">Date</th>
+                        <th className="px-4 py-2.5 font-medium">Ticker</th>
+                        <th className="px-4 py-2.5 font-medium">Timeframe</th>
+                        <th className="px-4 py-2.5 font-medium">Direction</th>
+                        <th className="px-4 py-2.5 font-medium">Confluence</th>
+                        <th className="px-4 py-2.5 font-medium">Entry</th>
+                        <th className="px-4 py-2.5 font-medium">Exit</th>
+                        <th className="px-4 py-2.5 font-medium">Outcome</th>
+                        <th className="px-4 py-2.5 text-right font-medium">Return</th>
                       </tr>
                     </thead>
                     <tbody>
                       {signals.map((s) => (
                         <tr key={s.id} className="border-b border-line last:border-0 hover:bg-tint/60">
-                          <td className="px-5 py-3.5 font-mono text-slate">{s.date ?? "—"}</td>
-                          <td className="px-5 py-3.5 font-mono font-medium text-ink">{s.ticker}</td>
-                          <td className="px-5 py-3.5 text-slate">{s.timeframe ?? "—"}</td>
+                          <td className="px-4 py-2.5 font-mono text-slate">{s.date ?? "—"}</td>
+                          <td className="px-4 py-2.5 font-mono font-medium text-ink">{s.ticker}</td>
+                          <td className="px-4 py-2.5 text-slate">{s.timeframe ?? "—"}</td>
                           <td
-                            className={`px-5 py-3.5 ${
+                            className={`px-4 py-2.5 ${
                               s.direction === "LONG"
                                 ? "text-brand-green"
                                 : s.direction === "SHORT"
@@ -130,22 +130,22 @@ export default function LiveSignalsPage() {
                           >
                             {s.direction ?? "—"}
                           </td>
-                          <td className="px-5 py-3.5 font-mono text-slate">
+                          <td className="px-4 py-2.5 font-mono text-slate">
                             {s.confluenceScore !== null ? s.confluenceScore.toFixed(2) : "—"}
                           </td>
-                          <td className="px-5 py-3.5 font-mono text-slate">
+                          <td className="px-4 py-2.5 font-mono text-slate">
                             {s.entryPrice !== null ? s.entryPrice.toFixed(2) : "—"}
                           </td>
-                          <td className="px-5 py-3.5 font-mono text-slate">
+                          <td className="px-4 py-2.5 font-mono text-slate">
                             {s.exitPrice !== null ? s.exitPrice.toFixed(2) : "—"}
                           </td>
-                          <td className="px-5 py-3.5">
+                          <td className="px-4 py-2.5">
                             <span className={`rounded-full px-2.5 py-1 font-mono text-[10.5px] ${outcomeTone(s.outcome)}`}>
                               {s.outcome ?? "—"}
                             </span>
                           </td>
                           <td
-                            className={`px-5 py-3.5 text-right font-mono font-medium ${
+                            className={`px-4 py-2.5 text-right font-mono font-medium ${
                               s.returnPct === null ? "text-slate" : s.returnPct >= 0 ? "text-brand-green" : "text-brand-red"
                             }`}
                           >

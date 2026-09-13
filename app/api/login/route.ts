@@ -1,18 +1,12 @@
 import { NextResponse } from "next/server";
 import { envs } from "@/config/env";
 import { extractTenantId, TENANT_COOKIE } from "@/lib/tenant";
-import { logger, newRequestId } from "@/lib/logger";
 
 /**
  * Strips the backend's own Domain attribute (which points at
  * kse-sentinel-backend-docker.onrender.com and would be silently rejected
  * by the browser on our own origin) and re-issues everything else as-is,
  * so the browser stores this cookie against *our* frontend origin instead.
- *
- * NOTE: not verified against a live login response — the exact cookie name
- * and attributes the backend sends weren't confirmed. If the refresh flow
- * doesn't work end-to-end, start by logging the raw `set-cookie` header
- * here to confirm the shape.
  */
 function rehostCookie(rawSetCookie: string): string {
   const parts = rawSetCookie.split(";").map((p) => p.trim());
@@ -24,9 +18,28 @@ function rehostCookie(rawSetCookie: string): string {
   return [nameValue, "Path=/", ...filtered].join("; ");
 }
 
+/**
+ * As of Aug 26 2026 the backend deliberately returns specific, actionable
+ * text for account-state blocks — tenant status (PENDING_REVIEW / REJECTED
+ * / SUSPENDED / TRIAL_EXPIRED, checked before the password) and
+ * email-not-verified (checked after the password succeeds). Those are
+ * meant to be shown as-is. Anything else — wrong password, unknown email,
+ * a locked-out account — stays a single generic message, so a 401 never
+ * lets a caller tell "wrong password" apart from "no such account" and
+ * enumerate real emails.
+ *
+ * The exact wording wasn't confirmed against a live response (the Swagger
+ * export doesn't show real example text), so this matches by the state
+ * keywords the backend's own docs use. If the real message text doesn't
+ * contain these, extend the list rather than assume the message layout.
+ */
+function isAccountStateMessage(detail: string): boolean {
+  const stateKeywords =
+    /pending.?review|rejected|suspended|trial.?expired|trial has expired|verify.?your.?email|email.?not.?verified|email.?verification/i;
+  return stateKeywords.test(detail);
+}
+
 export async function POST(req: Request) {
-  const requestId = newRequestId();
-  const startedAt = Date.now();
   const { email, password } = await req.json();
 
   let backendRes: Response;
@@ -39,35 +52,11 @@ export async function POST(req: Request) {
       },
       body: JSON.stringify({ email, password }),
     });
-  } catch (networkErr) {
-    logger.error("login_network_error", {
-      requestId,
-      durationMs: Date.now() - startedAt,
-      error: networkErr instanceof Error ? networkErr.message : String(networkErr),
-    });
-    return NextResponse.json(
-      { error: `Something went wrong. Please try again. (ref: ${requestId})` },
-      { status: 502 }
-    );
+  } catch {
+    return NextResponse.json({ error: "Something went wrong. Please try again." }, { status: 502 });
   }
 
-  const durationMs = Date.now() - startedAt;
-
   if (!backendRes.ok) {
-    // Log the real reason (wrong password vs. unknown email vs. locked
-    // account, whatever the backend says) server-side only. The browser
-    // always gets the same generic message regardless of status, on
-    // purpose — distinguishing "no such user" from "wrong password" is
-    // exactly what lets an attacker enumerate valid accounts.
-    const errBody = await backendRes.text().catch(() => "");
-    logger.warn("login_failed", {
-      requestId,
-      email, // audit trail of the attempted email; never log the password
-      status: backendRes.status,
-      durationMs,
-      detail: errBody,
-    });
-
     if (backendRes.status === 429) {
       return NextResponse.json(
         { error: "Too many sign-in attempts. Please wait a moment and try again." },
@@ -75,16 +64,27 @@ export async function POST(req: Request) {
       );
     }
     if (backendRes.status >= 500) {
-      return NextResponse.json(
-        { error: `Something went wrong. Please try again. (ref: ${requestId})` },
-        { status: 502 }
-      );
+      return NextResponse.json({ error: "Something went wrong. Please try again." }, { status: 502 });
     }
+
+    const errBody = await backendRes.text().catch(() => "");
+    let detail = "";
+    try {
+      const parsed = JSON.parse(errBody);
+      detail = typeof parsed?.detail === "string" ? parsed.detail : "";
+    } catch {
+      // not JSON — treat as no usable detail
+    }
+
+    if (detail && isAccountStateMessage(detail)) {
+      return NextResponse.json({ error: detail }, { status: backendRes.status });
+    }
+
+    // Wrong password / unknown email / locked account — deliberately generic.
     return NextResponse.json({ error: "Invalid email or password." }, { status: 401 });
   }
 
   const data = await backendRes.json();
-  logger.info("login_succeeded", { requestId, durationMs });
   const response = NextResponse.json(data);
 
   // Forward the backend's refresh-token cookie(s), rehosted onto our own origin.

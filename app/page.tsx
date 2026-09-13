@@ -1,5 +1,4 @@
 import { Button } from "@/components/button";
-import { Watermark } from "@/components/watermark";
 import { StepChart } from "@/components/step-chart";
 import { MiniChart } from "@/components/mini-chart";
 import Header from "@/components/Header";
@@ -78,13 +77,12 @@ export default function LandingPage() {
         id="top"
         className="relative overflow-hidden bg-gradient-to-b from-tint to-bg px-6 pb-14 pt-16 md:px-10 md:pt-24"
       >
-        <Watermark />
         <div className="relative mx-auto grid max-w-[1180px] gap-14 md:grid-cols-[1.05fr_1fr] md:items-center">
           <div>
             <span className="mb-5 inline-flex items-center gap-2 rounded-full bg-tint-gold px-3 py-1.5 font-mono text-[11px] uppercase tracking-[0.2em] text-gold">
               Decision-support engine · PSX
             </span>
-            <h1 className="mb-5 font-serif text-[38px] font-semibold leading-[1.16] tracking-tight text-ink md:text-[44px]">
+            <h1 className="mb-5 font-sans text-[38px] font-bold leading-[1.16] tracking-tight text-ink md:text-[44px]">
               Every signal traces back to a rule. <em className="not-italic text-gold">Never a black box.</em>
             </h1>
             <p className="mb-8 max-w-[480px] text-[16.5px] leading-relaxed text-slate">
@@ -117,7 +115,7 @@ export default function LandingPage() {
             "Monte Carlo, walk-forward, and Deflated Sharpe validation, caveats intact.",
             "A currently-running live forward-paper program, visually distinct from backtests.",
           ].map((text, i) => (
-            <div key={i} className="rounded-2xl border border-line bg-card shadow-sm p-5">
+            <div key={i} className="rounded-lg border border-line bg-card shadow-sm p-5">
               <div className="mb-2 font-mono text-[12px] font-medium tracking-wide text-gold">
                 0{i + 1}
               </div>
@@ -134,7 +132,7 @@ export default function LandingPage() {
             <span className="mb-3.5 block font-mono text-[11px] uppercase tracking-[0.18em] text-gold">
               Risk governance
             </span>
-            <h2 className="mb-3.5 font-serif text-[29px] font-semibold leading-tight text-ink">
+            <h2 className="mb-3.5 font-sans text-[29px] font-bold tracking-tight leading-tight text-ink">
               Controls that are visible, not just functional.
             </h2>
             <p className="text-[15.5px] leading-relaxed text-slate">
@@ -146,7 +144,7 @@ export default function LandingPage() {
             {riskCards.map((card) => (
               <div
                 key={card.title}
-                className="rounded-2xl border border-line bg-card shadow-sm p-7 transition-all duration-200 hover:-translate-y-0.5 hover:shadow-card"
+                className="rounded-lg border border-line bg-card shadow-sm p-7 transition-all duration-200 hover:-translate-y-0.5 hover:shadow-card"
               >
                 <div className="mb-4 flex h-11 w-11 items-center justify-center rounded-xl bg-tint">
                   {card.icon}
@@ -169,7 +167,7 @@ export default function LandingPage() {
             <span className="mb-3.5 block font-mono text-[11px] uppercase tracking-[0.18em] text-gold">
               Backtest vs. live
             </span>
-            <h2 className="mb-3.5 font-serif text-[29px] font-semibold leading-tight text-ink">
+            <h2 className="mb-3.5 font-sans text-[29px] font-bold tracking-tight leading-tight text-ink">
               Two kinds of evidence, never shown as one.
             </h2>
             <p className="text-[15.5px] leading-relaxed text-slate">
@@ -177,7 +175,7 @@ export default function LandingPage() {
               not a footnote.
             </p>
           </div>
-          <div className="overflow-hidden rounded-xl2 border border-line bg-panel shadow-panel">
+          <div className="overflow-hidden rounded-lg border border-line bg-panel shadow-panel">
             <div className="grid md:grid-cols-2">
               <div className="p-8">
                 <span className="mb-4 inline-block rounded-full bg-tint px-3 py-1.5 font-mono text-[10.5px] tracking-wide text-slate">
@@ -213,7 +211,7 @@ export default function LandingPage() {
             <span className="mb-3.5 block font-mono text-[11px] uppercase tracking-[0.18em] text-gold">
               Statistical rigor
             </span>
-            <h2 className="mb-3.5 font-serif text-[29px] font-semibold leading-tight text-ink">
+            <h2 className="mb-3.5 font-sans text-[29px] font-bold tracking-tight leading-tight text-ink">
               Tearsheets that keep the caveats.
             </h2>
             <p className="text-[15.5px] leading-relaxed text-slate">
@@ -227,7 +225,7 @@ export default function LandingPage() {
               { k: "DSR-adj.", l: "Deflated Sharpe Ratio, correcting for the number of trials run against the same data." },
               { k: "|z| > 2", l: "Anomaly flagging threshold on the trade return distribution — surfaced, not buried in an appendix." },
             ].map((s) => (
-              <div key={s.k} className="rounded-2xl border border-line bg-card shadow-sm p-6">
+              <div key={s.k} className="rounded-lg border border-line bg-card shadow-sm p-6">
                 <div className="mb-2 font-mono text-[25px] font-medium text-ink">{s.k}</div>
                 <div className="text-[12.5px] leading-relaxed text-slate">{s.l}</div>
               </div>
@@ -243,7 +241,7 @@ export default function LandingPage() {
             <span className="mb-3.5 block font-mono text-[11px] uppercase tracking-[0.18em] text-gold">
               Access, scoped by role
             </span>
-            <h2 className="mb-3.5 font-serif text-[29px] font-semibold leading-tight text-ink">
+            <h2 className="mb-3.5 font-sans text-[29px] font-bold tracking-tight leading-tight text-ink">
               Every tenant sees exactly what their role allows.
             </h2>
             <p className="text-[15.5px] leading-relaxed text-slate">
@@ -255,7 +253,7 @@ export default function LandingPage() {
             {roles.map((role) => (
               <div
                 key={role.name}
-                className={`rounded-2xl border border-line border-t-[3px] bg-panel p-6 ${role.tone}`}
+                className={`rounded-lg border border-line border-t-[3px] bg-panel p-6 ${role.tone}`}
               >
                 <span className="mb-3 inline-block rounded-full bg-tint px-2.5 py-1 font-mono text-[10.5px] uppercase tracking-wide text-slate">
                   {role.name}
@@ -272,6 +270,16 @@ export default function LandingPage() {
         </div>
       </section>
 
+
+      {/* Broker CTA band */}
+      <section className="px-6 py-14 text-center md:px-10">
+        <p className="mb-5 text-[14px] text-white/85">
+          Built for licensed brokers, banks, and investment houses.
+        </p>
+        <Button variant="gold" href="/for-brokers">
+          See plans for brokers
+        </Button>
+      </section>
 
       {/* Footer */}
       <footer className="flex flex-wrap items-center justify-between gap-4 border-t border-line px-6 py-8 text-[12.5px] text-slate md:px-10">

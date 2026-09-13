@@ -18,9 +18,9 @@ function Header() {
             <a href="#rigor" className="text-[13.5px] font-medium text-slate hover:text-ink">
               Statistical Rigor
             </a>
-            <a href="#access" className="text-[13.5px] font-medium text-slate hover:text-ink">
-              Access Tiers
-            </a>
+            <Link href="/for-brokers" className="text-[13.5px] font-medium text-slate hover:text-ink">
+              For Brokers
+            </Link>
             <Link href="/login" className="text-[13.5px] font-medium text-slate hover:text-ink">
               Sign in
             </Link>

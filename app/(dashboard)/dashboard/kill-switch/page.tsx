@@ -66,7 +66,7 @@ export default function KillSwitchPage() {
         <div className="grid gap-6 lg:grid-cols-[1fr_1.3fr]">
           {/* Status card */}
           <div
-            className={`rounded-2xl border p-7 ${
+            className={`rounded-lg border p-7 ${
               status.active ? "border-brand-red/30 bg-tint-red" : "border-line bg-panel"
             }`}
           >
@@ -164,7 +164,7 @@ export default function KillSwitchPage() {
           </div>
 
           {/* Explanation card */}
-          <div className="rounded-2xl border border-line bg-card shadow-sm p-7">
+          <div className="rounded-lg border border-line bg-card shadow-sm p-7">
             <h2 className="mb-4 text-[15.5px] font-semibold text-ink">What happens when you use this</h2>
             <ul className="space-y-3.5 text-[13.5px] leading-relaxed text-slate">
               <li className="flex gap-3">
@@ -196,7 +196,7 @@ export default function KillSwitchPage() {
         </div>
 
         {/* History */}
-        <div className="overflow-hidden rounded-2xl border border-line bg-card shadow-sm">
+        <div className="overflow-hidden rounded-lg border border-line bg-card shadow-sm">
           <div className="border-b border-line px-6 py-4">
             <h2 className="text-[15.5px] font-semibold text-ink">Activation history</h2>
           </div>
@@ -229,7 +229,7 @@ export default function KillSwitchPage() {
                 <tbody>
                   {history.map((ev) => (
                     <tr key={ev.id} className="border-b border-line last:border-0 hover:bg-tint/60">
-                      <td className="px-6 py-3.5">
+                      <td className="px-4 py-2.5">
                         <span
                           className={`rounded-full px-2.5 py-1 font-mono text-[10.5px] ${
                             ev.action === "ACTIVATED"
@@ -242,9 +242,9 @@ export default function KillSwitchPage() {
                           {ev.action ?? "—"}
                         </span>
                       </td>
-                      <td className="px-6 py-3.5 text-slate">{ev.reason ?? "—"}</td>
-                      <td className="px-6 py-3.5 font-mono text-[12.5px] text-slate">{ev.actor ?? "—"}</td>
-                      <td className="px-6 py-3.5 text-right font-mono text-[12.5px] text-slate">
+                      <td className="px-4 py-2.5 text-slate">{ev.reason ?? "—"}</td>
+                      <td className="px-4 py-2.5 font-mono text-[12.5px] text-slate">{ev.actor ?? "—"}</td>
+                      <td className="px-4 py-2.5 text-right font-mono text-[12.5px] text-slate">
                         {ev.timestamp ?? "—"}
                       </td>
                     </tr>

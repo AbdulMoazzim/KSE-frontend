@@ -3,9 +3,13 @@
 import { FormEvent, useCallback, useEffect, useState } from "react";
 import { Topbar } from "@/components/dashboard/topbar";
 import { LoadingState, ErrorState, EmptyState } from "@/components/dashboard/async-state";
-import { KeyValueBlock, KeyValueCard } from "@/components/dashboard/kv-block";
+import { KeyValueBlock } from "@/components/dashboard/kv-block";
+import { StatusCard } from "@/components/dashboard/ops/status-card";
+import { ForwardPaperProgressCard } from "@/components/dashboard/ops/forward-paper-progress-card";
+import { StrategyBreakdownCard } from "@/components/dashboard/ops/strategy-breakdown-card";
+import { LotSizeVerificationCard } from "@/components/dashboard/ops/lot-size-verification-card";
 import { apiGet, apiPost, ApiError } from "@/lib/api-client";
-import { extractArray } from "@/lib/normalize";
+import { extractArray, normalizeForwardPaperProgress, normalizeLotSizeStatus, normalizeStrategyBreakdown } from "@/lib/normalize";
 import { useTimeframe } from "@/context/timeframe-context";
 
 interface HealthData {
@@ -36,11 +40,11 @@ export default function OpsHealthPage() {
     setError(null);
     try {
       const [heartbeat, scanHealth, forwardPaperProgress, strategyBreakdown, lotSizeStatus] = await Promise.all([
-        apiGet(`/api/sentinel/ops/heartbeat?timeframe=${timeframe}`, { "X-Tenant-ID": "1" }),
-        apiGet("/api/sentinel/ops/scan-health", { "X-Tenant-ID": "1" }),
-        apiGet(`/api/sentinel/ops/forward-paper-progress?timeframe=${timeframe}`, { "X-Tenant-ID": "1" }),
-        apiGet(`/api/sentinel/ops/strategy-breakdown?timeframe=${timeframe}`, { "X-Tenant-ID": "1" }),
-        apiGet("/api/sentinel/ops/lot-size-status", { "X-Tenant-ID": "1" }),
+        apiGet(`/api/sentinel/ops/heartbeat?timeframe=${timeframe}`,{"X-tenant-ID": "1"}),
+        apiGet("/api/sentinel/ops/scan-health"),
+        apiGet(`/api/sentinel/ops/forward-paper-progress?timeframe=${timeframe}`, {"X-tenant-ID": "1"}),
+        apiGet(`/api/sentinel/ops/strategy-breakdown?timeframe=${timeframe}`, {"X-tenant-ID": "1"}),
+        apiGet("/api/sentinel/ops/lot-size-status"),
       ]);
       setData({ heartbeat, scanHealth, forwardPaperProgress, strategyBreakdown, lotSizeStatus });
     } catch (err) {
@@ -54,7 +58,7 @@ export default function OpsHealthPage() {
     setIncidentsLoading(true);
     setIncidentsError(null);
     try {
-      const raw = await apiGet("/api/sentinel/ops/incidents", { "X-Tenant-ID": "1" });
+      const raw = await apiGet("/api/sentinel/ops/incidents",{"X-tenant-ID": "1"});
       setIncidents(extractArray(raw, ["incidents"]));
     } catch (err) {
       setIncidentsError(err instanceof ApiError ? err.message : "We couldn't load the incident log.");
@@ -91,6 +95,17 @@ export default function OpsHealthPage() {
     }
   }
 
+  const scanHealthUnavailable =
+    typeof data?.scanHealth === "object" &&
+    data?.scanHealth !== null &&
+    "status" in data.scanHealth &&
+    (data.scanHealth as { status: unknown }).status === "no_log_found";
+  const heartbeatUnavailable =
+    typeof data?.heartbeat === "object" &&
+    data?.heartbeat !== null &&
+    "status" in data.heartbeat &&
+    (data.heartbeat as { status: unknown }).status === "NO_DATA";
+
   return (
     <>
       <Topbar
@@ -105,32 +120,32 @@ export default function OpsHealthPage() {
         ) : (
           data && (
             <>
-              <div className="grid gap-5 md:grid-cols-2">
-                {typeof data.scanHealth === "object" &&
-                  data.scanHealth !== null &&
-                  "status" in data.scanHealth &&
-                  data.scanHealth.status !== "no_log_found" && (
-                    <KeyValueCard
+              <div className="grid grid-cols-1 gap-5 lg:grid-cols-2">
+                <ForwardPaperProgressCard data={normalizeForwardPaperProgress(data.forwardPaperProgress)} />
+                <StrategyBreakdownCard rows={normalizeStrategyBreakdown(data.strategyBreakdown)} />
+              </div>
+
+              {(!scanHealthUnavailable || !heartbeatUnavailable) && (
+                <div className="grid grid-cols-1 gap-5 md:grid-cols-2">
+                  {!scanHealthUnavailable && (
+                    <StatusCard
                       title="Scan health"
-                      data={data.scanHealth}
                       note="Confirms the daily forward-paper scan actually ran, independent of whether it traded."
+                      data={data.scanHealth}
                     />
                   )}
-                {typeof data.heartbeat === "object" &&
-                  data.heartbeat !== null &&
-                  "status" in data.heartbeat &&
-                  data.heartbeat.status !== "NO_DATA" && (
-                   <KeyValueCard title="Heartbeat" data={data.heartbeat} note="Is today's scan run current, or stale?" />
+                  {!heartbeatUnavailable && (
+                    <StatusCard title="Heartbeat" note="Is today's scan run current, or stale?" data={data.heartbeat} />
                   )}
-                <KeyValueCard title="Forward-paper progress" data={data.forwardPaperProgress} note="Real progress through the 60-trading-day window." />
-                <KeyValueCard title="Strategy breakdown" data={data.strategyBreakdown} note="Open positions, closed trades, and realized P&L per strategy." />
-              </div>
-              <KeyValueCard title="Lot-size verification" data={data.lotSizeStatus} note="Coverage across the real trading universe, not a raw table dump." />
+                </div>
+              )}
+
+              <LotSizeVerificationCard data={normalizeLotSizeStatus(data.lotSizeStatus)} />
             </>
           )
         )}
 
-        <div className="rounded-2xl border border-line bg-card shadow-sm p-6">
+        <div className="rounded-lg border border-line bg-card shadow-sm p-6">
           <h2 className="mb-1 text-[15.5px] font-semibold text-ink">Incident log</h2>
           <p className="mb-4 text-[12.5px] text-slate">
             A running, timestamped notebook for anything worth flagging — not tied to a single ticker or trade.

@@ -4,7 +4,10 @@ import { FormEvent, useState } from "react";
 import { Topbar } from "@/components/dashboard/topbar";
 import { LoadingState, ErrorState } from "@/components/dashboard/async-state";
 import { KeyValueCard } from "@/components/dashboard/kv-block";
+import { OtherDataView } from "@/components/dashboard/financials/other-data-view";
 import { apiGet, apiPost, ApiError } from "@/lib/api-client";
+import { extractStatementBuckets, normalizeCorporateAnalysis, normalizeFundamentalsFiling } from "@/lib/normalize";
+import { StatementSnapshot } from "@/components/dashboard/financials/statement-snapshot";
 
 export default function FundamentalsPage() {
   const [ticker, setTicker] = useState("");
@@ -68,6 +71,10 @@ export default function FundamentalsPage() {
     }
   }
 
+  const buckets = extractStatementBuckets(fundamentals);
+  const filing = fundamentals !== null ? normalizeFundamentalsFiling(fundamentals) : null;
+  const corporateAnalysis = analysis !== null ? normalizeCorporateAnalysis(analysis) : null;
+
   return (
     <>
       <Topbar
@@ -86,7 +93,7 @@ export default function FundamentalsPage() {
               value={ticker}
               onChange={(e) => setTicker(e.target.value)}
               placeholder="e.g. HUBC"
-              className="w-full rounded-xl border-[1.5px] border-transparent bg-tint px-3.5 py-2.5 text-[16px] uppercase text-ink placeholder:normal-case placeholder:text-slate focus:border-gold focus:bg-panel focus:outline-none sm:text-[14px]"
+              className="w-full rounded-xl border-[1.5px] border-transparent px-3.5 py-2.5 text-[16px] uppercase text-ink placeholder:normal-case placeholder:text-slate focus:border-gold bg-panel focus:outline-none sm:text-[14px]"
             />
           </div>
           <button
@@ -105,27 +112,22 @@ export default function FundamentalsPage() {
             ) : error ? (
               <ErrorState message={error} onRetry={() => submittedTicker && runLookup(submittedTicker)} />
             ) : (
-              <div className="grid gap-5 sm:gap-6 xl:grid-cols-2">
-                <KeyValueCard
-                  title={`${submittedTicker} · Fundamentals`}
-                  data={fundamentals}
-                  note={fundamentals === null ? `No fundamentals on file for ${submittedTicker} yet.` : undefined}
-                />
-                <KeyValueCard
-                  title={`${submittedTicker} · Corporate Analysis`}
-                  data={analysis}
-                  note={
-                    analysis === null
-                      ? "No analysis available."
-                      : "DCF-style read using default WACC 12% / high growth 15% / terminal growth 4%."
-                  }
-                />
+              <div className="space-y-6">
+                <h2 className="text-[15px] font-semibold text-ink">{submittedTicker}</h2>
+                <StatementSnapshot income={buckets.income} balance={buckets.balance} cashflow={buckets.cashflow} />
+                {filing ? (
+                  <OtherDataView filing={filing} analysis={corporateAnalysis} />
+                ) : (
+                  <p className="rounded-lg border border-dashed border-line bg-tint/30 px-4 py-6 text-center text-[13px] text-slate">
+                    No fundamentals on file for {submittedTicker} yet.
+                  </p>
+                )}
               </div>
             )}
           </>
         )}
 
-        <div className="rounded-2xl border border-line bg-card shadow-sm p-5 sm:p-6">
+        <div className="rounded-lg border border-line bg-card shadow-sm p-5 sm:p-6">
           <h2 className="mb-1 text-[15px] font-semibold text-ink sm:text-[15.5px]">Sentiment scratchpad</h2>
           <p className="mb-4 text-[12.5px] text-slate">
             Paste a headline, filing excerpt, or analyst note to get a quick sentiment read against a ticker.

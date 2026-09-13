@@ -1,6 +1,5 @@
 import { NextResponse } from "next/server";
 import { BackendError } from "./api-server";
-import { logger, newRequestId } from "./logger";
 
 /**
  * A short list of validation phrases FastAPI/Pydantic commonly send in a
@@ -25,13 +24,12 @@ function looksLikeSafeValidationMessage(message: string): boolean {
  */
 export function handleBackendError(err: unknown) {
   if (err instanceof BackendError) {
-    const ref = `(ref: ${err.requestId})`;
 
     // 401/403 from upstream almost always means the server's own API key
     // is missing/wrong — not something the signed-in user did.
     if (err.status === 401 || err.status === 403) {
       return NextResponse.json(
-        { error: `The dashboard couldn't authenticate with the trading engine. Please contact an admin. ${ref}` },
+        { error: `The dashboard couldn't authenticate with the trading engine. Please contact an admin.` },
         { status: 502 }
       );
     }
@@ -41,7 +39,7 @@ export function handleBackendError(err: unknown) {
         {
           error: safe
             ? err.message
-            : `That request was missing something the trading engine needs. ${ref}`,
+            : `That request was missing something the trading engine needs.`,
         },
         { status: 422 }
       );
@@ -57,25 +55,18 @@ export function handleBackendError(err: unknown) {
     }
     if (err.status >= 500) {
       return NextResponse.json(
-        { error: `The trading engine hit a problem on its end. Please try again in a moment. ${ref}` },
+        { error: `The trading engine hit a problem on its end. Please try again in a moment.` },
         { status: 502 }
       );
     }
     // Any other 4xx: don't forward upstream text verbatim.
     return NextResponse.json(
-      { error: `That request couldn't be completed. ${ref}` },
+      { error: `That request couldn't be completed.` },
       { status: err.status }
     );
   }
-
-  const requestId = newRequestId();
-  logger.error("route_handler_unhandled_error", {
-    requestId,
-    error: err instanceof Error ? err.message : String(err),
-    stack: err instanceof Error ? err.stack : undefined,
-  });
   return NextResponse.json(
-    { error: `We couldn't reach the trading engine right now. Please try again in a moment. (ref: ${requestId})` },
+    { error: `We couldn't reach the trading engine right now. Please try again in a moment.` },
     { status: 502 }
   );
 }

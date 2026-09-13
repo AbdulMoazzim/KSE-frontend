@@ -3,37 +3,41 @@
 @tailwind utilities;
 
 /*
- * KSE Sentinel design tokens — v2 "Harbor" palette.
- * A deep teal + burnished bronze system, tuned for a professional
- * trading console in both light and dark mode. Values are R G B
- * triplets so Tailwind's opacity-modifier syntax (bg-panel/80) keeps
- * working. See tailwind.config.ts for how these bind to Tailwind
- * color classes, including the shadcn/ui-standard token names
- * (background, foreground, primary, card, etc.) which alias the same
- * palette so shadcn components drop in without a second color system.
+ * KSE Sentinel design tokens — "Ledger" palette.
+ * Institutional paper aesthetic: cream surfaces, ink-navy headings and
+ * text, a single burnished-gold accent — matched hex-for-hex against the
+ * approved HTML mockups (01–07). Values are R G B triplets so Tailwind's
+ * opacity-modifier syntax (bg-panel/80) keeps working. See
+ * tailwind.config.ts for how these bind to Tailwind color classes,
+ * including the shadcn/ui-standard token names (background, foreground,
+ * primary, card, etc.) which alias the same palette.
+ *
+ * Dark mode has no matching mockup (the approved designs are light-only,
+ * cream-paper by intent) — the .dark block below is this palette's own
+ * hue family carried into a dark surface, not a spec'd design.
  */
 :root {
   /* Brand core */
-  --c-navy: 14 76 73; /* #0E4C49 — deep teal, primary actions / active states */
-  --c-navy-soft: 10 57 55; /* #0A3937 — hover shade for teal fills */
-  --c-gold: 185 134 58; /* #B9863A — burnished bronze, accents & highlights */
-  --c-gold-bright: 205 160 94; /* #CDA05E */
-  --c-on-gold: 33 22 5; /* near-black text that stays readable on bronze */
+  --c-navy: 30 39 97; /* #1E2761 — ink-navy, headings + primary button fill */
+  --c-navy-soft: 24 32 80; /* #182050 — hover shade for navy fills */
+  --c-gold: 184 134 11; /* #B8860B — accent, primary CTAs */
+  --c-gold-bright: 200 154 46; /* #C89A2E — hover shade for gold fills */
+  --c-on-gold: 255 255 255; /* white text on gold, per mockups */
 
   /* Neutrals */
-  --c-slate: 90 102 114; /* #5A6672 — secondary text */
-  --c-ink: 16 22 27; /* #10161B — primary text/headings */
-  --c-bg: 246 247 249; /* #F6F7F9 — page background */
+  --c-slate: 68 84 106; /* #44546A — secondary text */
+  --c-ink: 26 29 41; /* #1A1D29 — primary text/headings */
+  --c-bg: 239 239 236; /* #EFEFEC — page background */
   --c-panel: 255 255 255; /* #FFFFFF — card surface */
-  --c-tint: 238 241 243; /* #EEF1F3 — surface-2 */
-  --c-tint-gold: 251 243 228; /* #FBF3E4 */
-  --c-tint-green: 232 245 238; /* #E8F5EE */
-  --c-tint-red: 252 234 233; /* #FCEAE9 */
-  --c-line: 225 230 234; /* #E1E6EA — border */
+  --c-tint: 241 241 238; /* #F1F1EE — subtle content band / secondary surface */
+  --c-tint-gold: 241 236 221; /* #F1ECDD */
+  --c-tint-green: 227 233 228; /* #E3E9E4 */
+  --c-tint-red: 239 228 225; /* #EFE4E1 */
+  --c-line: 233 233 239; /* #E9E9EF — border (navy @10% over white, pre-mixed) */
 
   /* Semantic */
-  --c-brand-green: 21 127 74; /* #157F4A */
-  --c-brand-red: 192 51 44; /* #C0332C */
+  --c-brand-green: 47 111 79; /* #2F6F4F */
+  --c-brand-red: 163 54 54; /* #A33636 */
 
   /* shadcn/ui-standard aliases (kept in the same RGB-triplet space) */
   --background: var(--c-bg);
@@ -55,31 +59,31 @@
   --border: var(--c-line);
   --input: var(--c-line);
   --ring: var(--c-navy);
-  --radius: 0.85rem;
+  --radius: 0.5rem;
 }
 
 .dark {
-  /* Brand core */
-  --c-navy: 20 101 90; /* #14655A — deep teal, dark enough to keep white button text legible */
-  --c-navy-soft: 27 124 109; /* #1B7C6D — hover shade, brighter but still readable with white text */
-  --c-gold: 227 181 100; /* #E3B564 */
-  --c-gold-bright: 238 200 133; /* #EEC885 */
-  --c-on-gold: 28 20 4;
+  /* Brand core — same hue family as light, lightened enough to read on a dark surface. Not spec'd by a mockup; extrapolated. */
+  --c-navy: 65 88 176; /* #4158B0 */
+  --c-navy-soft: 90 110 190; /* #5A6EBE */
+  --c-gold: 217 168 61; /* #D9A83D */
+  --c-gold-bright: 230 189 100; /* #E6BD64 */
+  --c-on-gold: 20 15 5;
 
   /* Neutrals */
-  --c-slate: 151 163 171; /* #97A3AB */
-  --c-ink: 238 241 243; /* #EEF1F3 */
-  --c-bg: 10 14 17; /* #0A0E11 */
-  --c-panel: 18 23 27; /* #12171B */
-  --c-tint: 27 33 38; /* #1B2126 */
-  --c-tint-gold: 44 34 14; /* #2C220E */
-  --c-tint-green: 18 40 30; /* #12281E */
-  --c-tint-red: 43 22 20; /* #2B1614 */
-  --c-line: 38 46 51; /* #262E33 */
+  --c-slate: 155 163 184; /* #9BA3B8 */
+  --c-ink: 236 237 242; /* #ECEDF2 */
+  --c-bg: 15 18 32; /* #0F1220 */
+  --c-panel: 23 27 46; /* #171B2E */
+  --c-tint: 30 35 56; /* #1E2338 */
+  --c-tint-gold: 46 38 16; /* muted gold band */
+  --c-tint-green: 20 40 32; /* muted green band */
+  --c-tint-red: 44 24 24; /* muted red band */
+  --c-line: 42 47 69; /* #2A2F45 */
 
   /* Semantic */
-  --c-brand-green: 74 222 148; /* #4ADE94 */
-  --c-brand-red: 235 100 89; /* #EB6459 */
+  --c-brand-green: 76 165 122; /* #4CA57A */
+  --c-brand-red: 217 100 95; /* #D9645F */
 }
 
 html {
